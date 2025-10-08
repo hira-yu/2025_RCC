@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お店側注文管理画面</title>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/store.css">
+</head>
+<body>
+    <header>
+        <img src="./img/momoport_logo.png" alt="Momoport Logo" class="store-logo">
+        <h1>注文管理</h1>
+    </header>
+
+    <main>
+        
+        <div id="order-list-container">
+            <table id="order-table">
+                <thead>
+                    <tr>
+                        <th>注文ID</th>
+                        <th>注文日時</th>
+                        <th>顧客名</th>
+                        <th>商品詳細</th>
+                        <th>合計金額</th>
+                        <th>特記事項</th>
+                        <th>ステータス</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-tbody">
+                    <!-- 注文データがここに挿入されます -->
+                </tbody>
+            </table>
+            <div id="loading" class="message">注文情報を読み込み中...</div>
+            <div id="error-message" class="message error"></div>
+        </div>
+    </main>
+
+    <script src="./js/store.js"></script>
+</body>
+</html>

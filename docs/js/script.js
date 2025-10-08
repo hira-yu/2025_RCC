@@ -1,5 +1,5 @@
-// ★★★ ここにデプロイしたGAS WebアプリのURLを設定してください ★★★
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby4pwwAzbWl5yavwF1tA5XfGgMuSNJBTKy_LILY-Z01wcnEIHQ7wYSFZy81SvpfyoEyUA/exec';
+const noImg_url = 'https://lh3.googleusercontent.com/d/1XwsZXQfdlJSt_ztCATEuRcDzWkbz_lk5';
 
 // 既存の定数
 const productListEl = document.getElementById('product-list');
@@ -19,7 +19,6 @@ const totalPriceDetailEl = document.getElementById('total-price-detail');
 const itemCountEl = document.getElementById('item-count');
 const totalPriceMiniEl = document.getElementById('total-price-mini');
 
-const noImg_url = 'https://lh3.googleusercontent.com/d/1XwsZXQfdlJSt_ztCATEuRcDzWkbz_lk5';
 
 // -------------------------------------------
 // 商品データの取得と表示
@@ -216,7 +215,7 @@ function renderCart() {
 function openOrderModal() {
     // 注文モーダルを開く前に、必ずカートを再描画して最新の状態を反映させる
     renderCart(); 
-    orderConfirmModal.style.display = 'block';
+    orderConfirmModal.style.display = 'inline-flex';
 }
 
 function closeOrderModal() {
@@ -248,6 +247,7 @@ async function submitOrder() {
   }
 
   const payload = {
+    action: 'submitOrder', // ★ 追加
     customerName: customerName,
     notes: notes,
     items: itemsToOrder
