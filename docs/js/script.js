@@ -113,7 +113,7 @@ function openModal(productId) {
   // カートの現在の数量を反映させる
   const currentQty = cart[productId] ? cart[productId].quantity : 0;
   document.getElementById('modal-quantity').value = currentQty > 0 ? currentQty : 1;
-  document.getElementById('product-modal').style.display = 'block';
+  document.getElementById('product-modal').style.display = 'inline-flex';
 }
 
 // -------------------------------------------
