@@ -19,6 +19,14 @@ const totalPriceDetailEl = document.getElementById('total-price-detail');
 const itemCountEl = document.getElementById('item-count');
 const totalPriceMiniEl = document.getElementById('total-price-mini');
 
+function showLoadingOverlay() {
+  document.getElementById('loading-overlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loading-overlay').style.display = 'none';
+}
+
 
 // -------------------------------------------
 // 商品データの取得と表示
@@ -226,6 +234,7 @@ function closeOrderModal() {
 // 注文データの送信
 // -------------------------------------------
 async function submitOrder() {
+  showLoadingOverlay(); // ローディングオーバーレイを表示
   messageEl.textContent = '注文を送信中...';
   document.getElementById('submit-order').disabled = true;
 
@@ -275,6 +284,7 @@ async function submitOrder() {
 }
 
 async function handleOrderSuccess(response) {
+  hideLoadingOverlay(); // ローディングオーバーレイを非表示
   document.getElementById('submit-order').disabled = false;
   
   if (response && response.status === 'success') {
@@ -297,6 +307,7 @@ async function handleOrderSuccess(response) {
 // エラーハンドリング関数 
 // -------------------------------------------
 function handleError(error) {
+  hideLoadingOverlay(); // ローディングオーバーレイを非表示
   // 注文送信中の場合はボタンを再度有効にする
   const submitButton = document.getElementById('submit-order');
   if (submitButton) {
