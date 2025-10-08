@@ -59,17 +59,44 @@ function renderOrders(orders) {
         return;
     }
 
-    orders.forEach(order => {
+    // 注文をorderIdでグループ化
+    const groupedOrders = orders.reduce((acc, currentOrder) => {
+        const orderId = currentOrder.orderId;
+        if (!acc[orderId]) {
+            acc[orderId] = {
+                orderId: orderId,
+                orderDateTime: currentOrder["注文日時"],
+                customerName: currentOrder["顧客名"],
+                totalAmount: 0, // 後で計算
+                notes: currentOrder["特記事項"],
+                status: currentOrder["ステータス"],
+                items: []
+            };
+        }
+        acc[orderId].items.push({
+            productName: currentOrder["商品名"],
+            quantity: currentOrder["数量"],
+            itemAmount: currentOrder["合計金額"] // 商品ごとの金額
+        });
+        // 注文全体の合計金額を計算
+        acc[orderId].totalAmount += currentOrder["合計金額"];
+        return acc;
+    }, {});
+
+    // グループ化された注文をループしてレンダリング
+    Object.values(groupedOrders).forEach(order => {
         const row = ordersTbody.insertRow();
         
         // 注文日時を整形
-        const orderDateTime = new Date(order["注文日時"]);
+        const orderDateTime = new Date(order.orderDateTime);
         const formattedDateTime = orderDateTime.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 
         // 商品詳細を整形
         const productDetails = `
             <ul class="order-items-list">
-                <li>${order["商品名"]} x ${order["数量"]} (${order["合計金額"]}円)</li>
+                ${order.items.map(item => `
+                    <li>${item.productName} x ${item.quantity} (${item.itemAmount}円)</li>
+                `).join('')}
             </ul>
         `;
 
@@ -80,7 +107,7 @@ function renderOrders(orders) {
             const option = document.createElement('option');
             option.value = status.value;
             option.textContent = status.label;
-            if (order["ステータス"] === status.value) {
+            if (order.status === status.value) {
                 option.selected = true;
             }
             statusSelect.appendChild(option);
@@ -92,16 +119,16 @@ function renderOrders(orders) {
         updateButton.className = 'update-status-btn';
         updateButton.onclick = () => updateOrderStatus(order.orderId, statusSelect.value);
 
-        row.insertCell().textContent = order.orderId; // 注文ID (行番号)
+        row.insertCell().textContent = order.orderId; // 注文ID
         row.insertCell().textContent = formattedDateTime;
-        row.insertCell().textContent = order["顧客名"];
+        row.insertCell().textContent = order.customerName;
         row.insertCell().innerHTML = productDetails;
-        row.insertCell().textContent = order["合計金額"].toLocaleString() + '円';
-        row.insertCell().textContent = order["特記事項"] || '-';
+        row.insertCell().textContent = order.totalAmount.toLocaleString() + '円';
+        row.insertCell().textContent = order.notes || '-';
         
         const statusCell = row.insertCell();
         statusCell.appendChild(statusSelect);
-        statusCell.classList.add(`status-${order["ステータス"].toLowerCase().replace(/ /g, '-')}`); // ステータスに応じたクラスを追加
+        statusCell.classList.add(`status-${order.status.toLowerCase().replace(/ /g, '-')}`); // ステータスに応じたクラスを追加
 
         const actionCell = row.insertCell();
         actionCell.appendChild(updateButton);
@@ -114,18 +141,20 @@ function renderOrders(orders) {
  * @param {string} newStatus - 新しいステータス
  */
 async function updateOrderStatus(orderId, newStatus) {
+    const payload = {
+        action: 'updateOrderStatus',
+        orderId: orderId,
+        newStatus: newStatus
+    };
+
+    var postparam = {
+        "method"     : "POST",
+        "Content-Type" : "application/x-www-form-urlencoded",
+        "body" : JSON.stringify(payload)
+    };
+
     try {
-        const response = await fetch(`${GAS_WEB_APP_URL}?action=doPost`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'updateOrderStatus',
-                orderId: orderId,
-                newStatus: newStatus
-            }),
-        });
+        const response = await fetch(GAS_WEB_APP_URL, postparam);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

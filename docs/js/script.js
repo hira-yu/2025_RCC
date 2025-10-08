@@ -247,42 +247,25 @@ async function submitOrder() {
   }
 
   const payload = {
-    action: 'submitOrder', // ★ 追加
+    action: 'submitOrder',
     customerName: customerName,
     notes: notes,
     items: itemsToOrder
   };
-  
-  // GASのdoPostが実行される関数名 (GASが公開されたAPIのURLを自動で解決)
-  // 注文処理はGASのWebアプリURLに対して直接fetch APIでPOSTする必要があります。
-  // GASが自身でホストしているHTML内のJSからは、google.script.runが利用できますが、
-  // 今回はPOSTデータの形式を制御するため、一旦GASのgsファイル内のヘルパー関数を経由させます。
-  
-  // google.script.run.withSuccessHandler(handleOrderSuccess)
-  //   .withFailureHandler(handleError)
-  //   .sendOrderData(JSON.stringify(payload));
-  
-  // ★補足: よりシンプルにするため、GASが提供するgoogle.script.runを使ってgsファイル内の
-  // sendOrderData関数(新設)を呼び出す形に変更します。
-  // POSTリクエストはGASのWebアプリURLに対して直接送信する必要がありますが、
-  // ここではGASの仕組みを活かし、gsファイル内のdoPost関数を外部から呼び出すための
-  // ラッパー関数 sendOrderDataを仮定します。
-  
-  // 実際には、google.script.runはdoPostを直接呼べないため、
-  // 以下のカスタム関数をCode.gsに追加して対応します。
-  try {
-    const response = await fetch(`${GAS_WEB_APP_URL}?action=doPost`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
 
+  var postparam = {
+    "method"     : "POST",
+    "Content-Type" : "application/x-www-form-urlencoded",
+    "body" : JSON.stringify(payload)
+  };
+
+  try {
+    const response = await fetch(GAS_WEB_APP_URL, postparam);
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
+    
     const result = await response.json();
     handleOrderSuccess(result);
   } catch (error) {
