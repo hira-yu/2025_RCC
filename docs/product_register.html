@@ -110,7 +110,45 @@
                 <textarea id="ingredients"></textarea>
             </div>
             <div class="form-group">
-                <label for="allergens">アレルギー情報</label>
+                <label>特定原材料 (表示義務品目)</label>
+                <div class="allergen-checkbox-group">
+                    <label for="allergen-shrimp"><input type="checkbox" id="allergen-shrimp" name="specifiedAllergens" value="えび"><span>えび</span></label>
+                    <label for="allergen-crab"><input type="checkbox" id="allergen-crab" name="specifiedAllergens" value="かに"><span>かに</span></label>
+                    <label for="allergen-wheat"><input type="checkbox" id="allergen-wheat" name="specifiedAllergens" value="小麦"><span>小麦</span></label>
+                    <label for="allergen-buckwheat"><input type="checkbox" id="allergen-buckwheat" name="specifiedAllergens" value="そば"><span>そば</span></label>
+                    <label for="allergen-egg"><input type="checkbox" id="allergen-egg" name="specifiedAllergens" value="卵"><span>卵</span></label>
+                    <label for="allergen-milk"><input type="checkbox" id="allergen-milk" name="specifiedAllergens" value="乳"><span>乳</span></label>
+                    <label for="allergen-peanut"><input type="checkbox" id="allergen-peanut" name="specifiedAllergens" value="落花生"><span>落花生</span></label>
+                    <label for="allergen-walnut"><input type="checkbox" id="allergen-walnut" name="specifiedAllergens" value="くるみ"><span>くるみ</span></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="recommendedAllergensSelect">特定原材料に準ずるもの (表示推奨品目)</label>
+                <select id="recommendedAllergensSelect" name="recommendedAllergens" multiple size="5">
+                    <option value="アーモンド">アーモンド</option>
+                    <option value="あわび">あわび</option>
+                    <option value="いか">いか</option>
+                    <option value="いくら">いくら</option>
+                    <option value="オレンジ">オレンジ</option>
+                    <option value="カシューナッツ">カシューナッツ</option>
+                    <option value="キウイフルーツ">キウイフルーツ</option>
+                    <option value="牛肉">牛肉</option>
+                    <option value="ごま">ごま</option>
+                    <option value="さけ">さけ</option>
+                    <option value="さば">さば</option>
+                    <option value="大豆">大豆</option>
+                    <option value="鶏肉">鶏肉</option>
+                    <option value="バナナ">バナナ</option>
+                    <option value="豚肉">豚肉</option>
+                    <option value="マカダミアナッツ">マカダミアナッツ</option>
+                    <option value="もも">もも</option>
+                    <option value="やまいも">やまいも</option>
+                    <option value="りんご">りんご</option>
+                    <option value="ゼラチン">ゼラチン</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="allergens">アレルギー情報（備考）</label>
                 <textarea id="allergens"></textarea>
             </div>
             <div class="form-group">

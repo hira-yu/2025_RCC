@@ -139,6 +139,86 @@ select:focus {
     outline: none;
 }
 
+/* アレルギーチェックボックスグループのスタイル */
+.allergen-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.allergen-checkbox-group label {
+    font-weight: normal;
+    margin-bottom: 0;
+    display: flex; /* チェックボックスとテキストを横並びにする */
+    align-items: center;
+    padding: 8px 12px; /* パディングを追加 */
+    border: 1px solid #ddd; /* 枠線を追加 */
+    border-radius: 5px; /* 角丸を追加 */
+    background-color: #fff; /* 背景色を追加 */
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    position: relative; /* ::before の基準位置 */
+}
+
+.allergen-checkbox-group label input[type="checkbox"] {
+    /* ネイティブのチェックボックスを非表示にする */
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.allergen-checkbox-group label span {
+    position: relative;
+    padding-left: 25px; /* カスタムチェックボックス分のスペース */
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.allergen-checkbox-group input[type="checkbox"] + span::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.allergen-checkbox-group input[type="checkbox"]:checked + span::before {
+    background-color: #007bff; /* チェック時の背景色 */
+    border-color: #007bff; /* チェック時の枠線色 */
+}
+
+.allergen-checkbox-group input[type="checkbox"]:checked + span::after {
+    content: '\2713'; /* チェックマーク */
+    display: block;
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.allergen-checkbox-group input[type="checkbox"]:checked + label {
+    background-color: #e0f7fa; /* チェックされた時の背景色 */
+    border-color: #00bcd4; /* チェックされた時の枠線色 */
+}
+
 /* input[type="number"] の幅調整 */
 .quantity-control input[type="number"] {
     width: 80px; /* 数量コントロール内のinputの幅を調整 */

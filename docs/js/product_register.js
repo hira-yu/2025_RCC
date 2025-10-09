@@ -40,8 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const productName = document.getElementById('productName').value;
         const productPrice = document.getElementById('productPrice').value;
         const ingredients = document.getElementById('ingredients').value;
-        const allergens = document.getElementById('allergens').value;
+        const allergensRemarks = document.getElementById('allergens').value; // 備考として残す
         const imageFile = productImageInput.files[0]; // 画像ファイルを取得
+
+        // 特定原材料の収集
+        const specifiedAllergens = Array.from(document.querySelectorAll('input[name="specifiedAllergens"]:checked'))
+                                        .map(checkbox => checkbox.value);
+
+        // 特定原材料に準ずるものの収集 (複数選択プルダウンから)
+        const recommendedAllergensSelect = document.getElementById('recommendedAllergensSelect');
+        const recommendedAllergens = Array.from(recommendedAllergensSelect.options)
+                                          .filter(option => option.selected)
+                                          .map(option => option.value);
 
         if (!productName || !productPrice) {
             showMessage('商品名と価格は必須です。', 'error');
@@ -92,7 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
             price: parseInt(productPrice),
             imageData: imageData, // Base64エンコードされた画像データ
             ingredients: ingredients,
-            allergens: allergens,
+            specifiedAllergens: specifiedAllergens, // 新しい特定原材料
+            recommendedAllergens: recommendedAllergens, // 新しい特定原材料に準ずるもの
+            allergensRemarks: allergensRemarks, // 備考
             options: options
         };
 
