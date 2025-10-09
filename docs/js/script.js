@@ -19,12 +19,24 @@ const totalPriceDetailEl = document.getElementById('total-price-detail');
 const itemCountEl = document.getElementById('item-count');
 const totalPriceMiniEl = document.getElementById('total-price-mini');
 
+const MAX_ITEM_QUANTITY = 10; // 商品あたりの最大注文個数
+
 function showLoadingOverlay() {
   document.getElementById('loading-overlay').style.display = 'flex';
 }
 
 function hideLoadingOverlay() {
   document.getElementById('loading-overlay').style.display = 'none';
+}
+
+function openResultModal(title, message) {
+  document.getElementById('result-modal-title').textContent = title;
+  document.getElementById('result-modal-message').textContent = message;
+  document.getElementById('result-modal').style.display = 'inline-flex';
+}
+
+function closeResultModal() {
+  document.getElementById('result-modal').style.display = 'none';
 }
 
 
@@ -137,6 +149,10 @@ function changeQuantity(delta) {
   if (newValue < minVal) {
       newValue = minVal;
   }
+  // 最大値チェック (MAX_ITEM_QUANTITYを超えないようにする)
+  if (newValue > MAX_ITEM_QUANTITY) {
+      newValue = MAX_ITEM_QUANTITY;
+  }
   
   qtyInput.value = newValue;
 }
@@ -156,20 +172,36 @@ function addToCartFromModal() {
   
   const qtyInput = document.getElementById('modal-quantity');
   const quantity = parseInt(qtyInput.value) || 0;
-  const modalMessageEl = document.getElementById('modal-message');
 
   if (quantity <= 0) {
-    modalMessageEl.textContent = '数量は1以上で入力してください。';
+    openResultModal('エラー', '数量は1以上で入力してください。');
     return;
   }
 
-  // カートを更新
-  cart[currentProduct.id].quantity = quantity;
-  
-  modalMessageEl.textContent = `✅ ${currentProduct.name}を${quantity}個カートに追加しました。`;
-  
-  // モーダルを閉じてカートの状態を更新
-  setTimeout(closeModal, 1000); 
+  const existingQuantity = cart[currentProduct.id] ? cart[currentProduct.id].quantity : 0;
+  const newTotalQuantity = existingQuantity + quantity;
+
+  if (newTotalQuantity > MAX_ITEM_QUANTITY) {
+    openResultModal('エラー', `1つの商品の注文は${MAX_ITEM_QUANTITY}個までです。`);
+    return;
+  }
+
+  showLoadingOverlay(); // ローディングオーバーレイを表示
+
+  try {
+    // カートを更新 (加算)
+    cart[currentProduct.id].quantity = newTotalQuantity; // 合計数量を代入
+    
+    const successMessage = `✅ ${currentProduct.name}を${quantity}個カートに追加しました。`;
+    hideLoadingOverlay(); // ローディングオーバーレイを非表示
+    closeModal(); // 商品モーダルを閉じる
+    openResultModal('カートに追加', successMessage);
+  } catch (error) {
+    const errorMessage = `❌ カートへの追加に失敗しました: ${error.message}`;
+    hideLoadingOverlay(); // ローディングオーバーレイを非表示
+    closeModal(); // 商品モーダルを閉じる
+    openResultModal('エラー', errorMessage);
+  }
 }
 
 // -------------------------------------------
@@ -199,12 +231,25 @@ function renderCart() {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
         totalItemsCount += item.quantity; // 全商品の合計数量をカウント
-        detailHtml += `<p>${item.name} x ${item.quantity} = ${itemTotal.toLocaleString()}円</p>`;
+        detailHtml += `
+          <div class="cart-item">
+              <span class="item-name">${item.name}</span>
+              <span class="item-price">¥${itemTotal.toLocaleString()}</span>
+              <div class="item-controls">
+                  <div class="quantity-control">
+                      <button class="qty-button" onclick="updateCartItemQuantity('${item.id}', -1)">&minus;</button>
+                      <input type="number" class="item-quantity" value="${item.quantity}" min="1" max="${MAX_ITEM_QUANTITY}" onchange="updateCartItemQuantity('${item.id}', 0, this.value)">
+                      <button class="qty-button" onclick="updateCartItemQuantity('${item.id}', 1)">&plus;</button>
+                  </div>
+                  <button class="remove-item-button" onclick="removeCartItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>
+              </div>
+          </div>
+        `;
       }
     }
 
     if (totalItemsCount === 0) {
-      detailHtml = 'カートは空です。';
+      detailHtml = '<p class="empty-cart-message">カートは空です。</p>';
     }
     
     // 1. 詳細モーダル内の要素を更新
@@ -220,6 +265,38 @@ function renderCart() {
 // -------------------------------------------
 // 注文確認モーダル制御 (新規作成)
 // -------------------------------------------
+// -------------------------------------------
+// カートアイテムの数量更新
+// -------------------------------------------
+function updateCartItemQuantity(productId, delta, newValue = null) {
+  if (!cart[productId]) return;
+
+  let newQuantity;
+  if (newValue !== null) {
+    newQuantity = parseInt(newValue) || 0;
+  } else {
+    newQuantity = cart[productId].quantity + delta;
+  }
+
+  // 数量のバリデーション
+  if (newQuantity < 1) newQuantity = 1; // 最小値を1に変更
+  if (newQuantity > MAX_ITEM_QUANTITY) newQuantity = MAX_ITEM_QUANTITY;
+
+  cart[productId].quantity = newQuantity;
+  renderCart();
+}
+
+// -------------------------------------------
+// カートアイテムの削除
+// -------------------------------------------
+function removeCartItem(productId) {
+  if (!cart[productId]) return;
+
+  cart[productId].quantity = 0; // 数量を0にすることで削除とみなす
+  renderCart();
+}
+
+
 function openOrderModal() {
     // 注文モーダルを開く前に、必ずカートを再描画して最新の状態を反映させる
     renderCart(); 
@@ -234,26 +311,29 @@ function closeOrderModal() {
 // 注文データの送信
 // -------------------------------------------
 async function submitOrder() {
-  showLoadingOverlay(); // ローディングオーバーレイを表示
-  messageEl.textContent = '注文を送信中...';
   document.getElementById('submit-order').disabled = true;
-
+  
   const customerName = document.getElementById('customerName').value.trim();
   const notes = document.getElementById('notes').value;
   
   if (!customerName) {
-      messageEl.textContent = 'エラー: お名前を入力してください。';
-      document.getElementById('submit-order').disabled = false;
-      return;
+    // messageEl.textContent = 'エラー: お名前を入力してください。'; // 削除
+    document.getElementById('submit-order').disabled = false;
+    // closeOrderModal(); // カートモーダルを閉じる - 削除
+    openResultModal('エラー', 'エラー: お名前を入力してください。');
+    return;
   }
-
+  
   const itemsToOrder = Object.values(cart).filter(item => item.quantity > 0);
   
   if (itemsToOrder.length === 0) {
-      messageEl.textContent = 'エラー: 注文する商品がありません。';
-      document.getElementById('submit-order').disabled = false;
-      return;
+    // messageEl.textContent = 'エラー: 注文する商品がありません。'; // 削除
+    document.getElementById('submit-order').disabled = false;
+    // closeOrderModal(); // カートモーダルを閉じる - 削除
+    openResultModal('エラー', 'エラー: 注文する商品がありません。');
+    return;
   }
+  showLoadingOverlay(); // ローディングオーバーレイを表示
 
   const payload = {
     action: 'submitOrder',
@@ -288,7 +368,8 @@ async function handleOrderSuccess(response) {
   document.getElementById('submit-order').disabled = false;
   
   if (response && response.status === 'success') {
-    messageEl.textContent = '✅ 注文は正常に送信されました！';
+    closeOrderModal(); // カートモーダルを閉じる
+    openResultModal('注文完了', '✅ 注文は正常に送信されました！');
     // フォームとカートをリセット
     document.getElementById('customerName').value = '';
     document.getElementById('notes').value = '';
@@ -299,6 +380,7 @@ async function handleOrderSuccess(response) {
     }
     renderCart();
   } else {
+    // 成功しなかった場合はエラーとして処理
     handleError(response.message || '注文は失敗しました。');
   }
 }
@@ -315,7 +397,11 @@ function handleError(error) {
   }
 
   console.error("致命的なエラーが発生しました:", error);
-  messageEl.textContent = '❌ エラーが発生しました: ' + (typeof error === 'string' ? error : JSON.stringify(error));
+  const errorMessage = '❌ エラーが発生しました: ' + (typeof error === 'string' ? error : JSON.stringify(error));
+  // messageEl.textContent = errorMessage; // 削除
+  
+  // closeOrderModal(); // カートモーダルを閉じる - 削除
+  openResultModal('エラー', errorMessage); // 結果モーダルでエラーを表示
   
   // モーダルが開いている場合は閉じる（モーダル内エラーの場合を想定）
   document.getElementById('modal-message').textContent = '';
@@ -326,9 +412,18 @@ function handleError(error) {
 // -------------------------------------------
 // モーダル外クリックで閉じる処理
 window.onclick = function(event) {
-  const modal = document.getElementById('product-modal');
-  if (event.target == modal) {
+  const productModal = document.getElementById('product-modal');
+  const orderConfirmModal = document.getElementById('order-confirm-modal'); // 追加
+  const resultModal = document.getElementById('result-modal'); // 追加
+
+  if (event.target == productModal) {
     closeModal();
+  }
+  if (event.target == orderConfirmModal) { // 追加
+    closeOrderModal();
+  }
+  if (event.target == resultModal) { // 追加
+    closeResultModal();
   }
 }
 

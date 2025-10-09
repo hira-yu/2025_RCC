@@ -191,16 +191,18 @@ input[type="text"], textarea {
     display: flex; align-items: center; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; 
 }
 .qty-button {
-    width: 60px; height: 70px; font-size: 1.5em; background-color: #f0f0f0; border: none; cursor: pointer;
+    width: 60px; height: 60px; font-size: 1.2em; background-color: #f0f0f0; border: none; cursor: pointer;
     display: inline-flex; justify-content: center; align-items: center
 }
 .qty-button:hover { background-color: #ddd; }
-#modal-quantity {
-    width: 80px; height: 70px; font-size: 1.5em; padding: 0; border: none; text-align: center;
+#modal-quantity, .item-quantity { /* .item-quantity を追加 */
+    width: 80px; height: 60px; font-size: 1.2em; padding: 0; border: none; text-align: center;
     -moz-appearance: textfield; 
 }
 #modal-quantity::-webkit-outer-spin-button,
-#modal-quantity::-webkit-inner-spin-button {
+#modal-quantity::-webkit-inner-spin-button,
+.cart-item .item-quantity::-webkit-outer-spin-button,
+.cart-item .item-quantity::-webkit-inner-spin-button {
     -webkit-appearance: none; margin: 0;
 }
 #add-to-cart-button {
@@ -267,4 +269,88 @@ input[type="text"], textarea {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* 結果表示モーダルのボタン */
+#result-modal .modal-content button {
+    padding: 15px 20px;
+    font-size: 1.2em;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+}
+
+#result-modal .modal-content button:hover {
+    background-color: #0056b3;
+}
+
+/* カートアイテムのスタイル */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item .item-name {
+    flex-grow: 1;
+    font-weight: bold;
+    order: 1;
+}
+.cart-item .item-price {
+    margin-right: 10px;
+    font-weight: bold;
+    order: 2;
+}
+
+.cart-item .item-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    order: 3;
+}
+
+/* .cart-item .item-quantity のスタイルは#modal-quantityと共通化するため削除 */
+
+.cart-item .qty-button, .remove-item-button {
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+}
+
+.cart-item .qty-button {
+    background-color: #f0f0f0;
+}
+
+.cart-item .qty-button:hover {
+    background-color: #ddd;
+}
+
+.cart-item .remove-item-button {
+    background-color: #6c757d; /* 灰色 */
+    color: white;
+    padding: 10px 15px; /* 大きくする */
+    font-size: 1.2em; /* 大きくする */
+    margin-right: 10px; /* 右側に間隔 */
+    order: 0; /* 一番左に配置 */
+}
+
+.cart-item .remove-item-button:hover {
+    background-color: #5a6268; /* ホバー時の色 */
+}
+
+.empty-cart-message {
+    text-align: center;
+    color: #666;
+    padding: 20px 0;
 }
