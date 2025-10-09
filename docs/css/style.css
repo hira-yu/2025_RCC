@@ -1,4 +1,68 @@
 /* 既存のCSS（省略） */
+
+/* --- 汎用ボタンのスタイル --- */
+.btn {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none; /* リンクとして使用する場合のアンダーラインを削除 */
+    color: white; /* デフォルトの文字色 */
+}
+
+.btn:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-success {
+    background-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-outline {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.btn-outline:hover {
+    background-color: #ddd;
+    box-shadow: none;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* --- 基本設定の拡大 --- 
 /* --- 基本設定の拡大 --- */
 body { 
     font-family: sans-serif; 
@@ -25,6 +89,7 @@ header {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative; /* アイコン配置のために追加 */
 }
 
 .store-logo {
@@ -34,12 +99,53 @@ header {
     vertical-align: bottom;
 }
 
-input[type="text"], textarea {
-    padding: 12px !important; 
-    font-size: 1.1em !important; 
-    border-radius: 8px !important;
-    margin-bottom: 15px !important;
+/* 注文ステータスアイコン */
+.order-status-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2.5em;
+    color: #007bff;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.order-status-icon:hover {
+    color: #0056b3;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+textarea,
+select {
+    padding: 12px;
+    font-size: 1em; /* 汎用的なフォントサイズに調整 */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
     box-sizing: border-box;
+    width: 100%;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="file"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* input[type="number"] の幅調整 */
+.quantity-control input[type="number"] {
+    width: 80px; /* 数量コントロール内のinputの幅を調整 */
+    margin-bottom: 0;
+    border-radius: 0;
+    border-top: none;
+    border-bottom: none;
 }
 
 /* --- 1. 商品リスト (product-card) の調整 --- */
@@ -119,13 +225,7 @@ input[type="text"], textarea {
 }
 
 .view-cart-button {
-    padding: 12px 25px;
-    font-size: 3.2em;
-    border-radius: 8px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
+    font-size: 3.2em; /* 特定のフォントサイズを維持 */
 }
 
 /* 注文概要エリア（既存のスタイルを調整） */
@@ -139,15 +239,15 @@ input[type="text"], textarea {
     max-width: 600px; /* PCなど大画面でも広がりすぎないように制限 */
 }
 
-.submit-button { 
-    padding: 18px; 
-    font-size: 1.4em; 
-    border-radius: 10px; 
+.submit-button {
+    padding: 18px; /* 特定のパディングを維持 */
+    font-size: 1.4em; /* 特定のフォントサイズを維持 */
+    border-radius: 10px; /* 特定の角丸を維持 */
     margin-top: 20px;
-    display: block; width: 100%; background-color: #007bff; color: white; border: none; cursor: pointer;
+    display: block; width: 100%;
 }
 .submit-button:hover {
-    background-color: #0056b3;
+    /* ホバー時のスタイルは.btn-primaryで定義されるため、ここでは不要 */
     cursor: pointer;
 }
 .error { color: red; font-weight: bold; margin-bottom: 10px; }
@@ -191,10 +291,10 @@ input[type="text"], textarea {
     display: flex; align-items: center; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; 
 }
 .qty-button {
-    width: 60px; height: 60px; font-size: 1.2em; background-color: #f0f0f0; border: none; cursor: pointer;
+    width: 60px; height: 60px; font-size: 1.2em; /* 特定のサイズとフォントサイズを維持 */
     display: inline-flex; justify-content: center; align-items: center
 }
-.qty-button:hover { background-color: #ddd; }
+.qty-button:hover { /* ホバー時のスタイルは.btn-outlineで定義されるため、ここでは不要 */ }
 #modal-quantity, .item-quantity { /* .item-quantity を追加 */
     width: 80px; height: 60px; font-size: 1.2em; padding: 0; border: none; text-align: center;
     -moz-appearance: textfield; 
@@ -207,7 +307,7 @@ input[type="text"], textarea {
 }
 #add-to-cart-button {
     padding: 15px 20px; font-size: 1.2em; border-radius: 8px; flex-grow: 1;
-    background-color: #28a745; color: white; border: none; cursor: pointer; height: 70px;
+    height: 70px;
 }
 /* ★ モーダルウィンドウのCSSここまで */
 
@@ -276,16 +376,8 @@ input[type="text"], textarea {
     padding: 15px 20px;
     font-size: 1.2em;
     border-radius: 8px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
     margin-top: 20px;
     width: 100%;
-}
-
-#result-modal .modal-content button:hover {
-    background-color: #0056b3;
 }
 
 /* カートアイテムのスタイル */
@@ -337,20 +429,87 @@ input[type="text"], textarea {
 }
 
 .cart-item .remove-item-button {
-    background-color: #6c757d; /* 灰色 */
-    color: white;
     padding: 10px 15px; /* 大きくする */
     font-size: 1.2em; /* 大きくする */
     margin-right: 10px; /* 右側に間隔 */
     order: 0; /* 一番左に配置 */
 }
 
-.cart-item .remove-item-button:hover {
-    background-color: #5a6268; /* ホバー時の色 */
-}
-
 .empty-cart-message {
     text-align: center;
     color: #666;
     padding: 20px 0;
+}
+
+/* オプション選択UIのスタイル */
+.option-group {
+    margin-bottom: 10px;
+}
+
+.option-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.option-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.cart-item-options {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 2px;
+    margin-bottom: 5px;
+}
+
+/* 注文ステータス表示用のスタイル */
+.status-new {
+    color: #007bff;
+    font-weight: bold;
+}
+.status-accepted {
+    color: #28a745;
+    font-weight: bold;
+}
+.status-cooking {
+    color: #ffc107;
+    font-weight: bold;
+}
+.status-delivering {
+    color: #17a2b8;
+    font-weight: bold;
+}
+.status-completed {
+    color: #6c757d;
+    font-weight: bold;
+}
+.status-cancelled {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.order-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.order-items-list li {
+    padding: 8px 0;
+    border-bottom: 1px dotted #eee;
+}
+
+.order-items-list li:last-child {
+    border-bottom: none;
+}
+
+.order-items-list small {
+    color: #666;
 }

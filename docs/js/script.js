@@ -132,7 +132,41 @@ function openModal(productId) {
   // カートの現在の数量を反映させる
   const currentQty = cart[productId] ? cart[productId].quantity : 0;
   document.getElementById('modal-quantity').value = currentQty > 0 ? currentQty : 1;
+
+  // オプション選択UIを生成
+  const optionsContainer = document.getElementById('modal-options-container');
+  optionsContainer.innerHTML = ''; // 既存のオプションをクリア
+
+  if (product.options && product.options.length > 0) {
+    product.options.forEach((optionGroup, index) => {
+      const optionGroupDiv = document.createElement('div');
+      optionGroupDiv.className = 'option-group';
+      optionGroupDiv.innerHTML = `<label>${optionGroup.name}:</label>`;
+
+      const selectEl = document.createElement('select');
+      selectEl.id = `option-select-${index}`;
+      selectEl.className = 'option-select';
+      selectEl.onchange = updateModalPrice; // オプション選択時に価格を更新
+
+      // 最初の選択肢として「オプションなし」を追加
+      const noOptionEl = document.createElement('option');
+      noOptionEl.value = `なし|0`; // 価格調整は0
+      noOptionEl.textContent = `なし`;
+      selectEl.appendChild(noOptionEl);
+
+      optionGroup.values.forEach((value, valIndex) => {
+        const optionEl = document.createElement('option');
+        optionEl.value = `${value}|${optionGroup.prices[valIndex]}`; // 値と価格調整を結合
+        optionEl.textContent = `${value} (+${optionGroup.prices[valIndex]}円)`;
+        selectEl.appendChild(optionEl);
+      });
+      optionGroupDiv.appendChild(selectEl);
+      optionsContainer.appendChild(optionGroupDiv);
+    });
+  }
+
   document.getElementById('product-modal').style.display = 'inline-flex';
+  updateModalPrice(); // 初期表示時の価格を更新
 }
 
 // -------------------------------------------
@@ -155,6 +189,26 @@ function changeQuantity(delta) {
   }
   
   qtyInput.value = newValue;
+}
+
+function updateModalPrice() {
+  if (!currentProduct) return;
+
+  let basePrice = currentProduct.price;
+  let optionPriceAdjustment = 0;
+  const optionsContainer = document.getElementById('modal-options-container');
+  const selectElements = optionsContainer.querySelectorAll('.option-select');
+
+  selectElements.forEach(selectEl => {
+    const selectedOptionValue = selectEl.value;
+    if (selectedOptionValue) {
+      const pricePart = selectedOptionValue.split('|')[1];
+      optionPriceAdjustment += parseInt(pricePart);
+    }
+  });
+
+  const displayPrice = basePrice + optionPriceAdjustment;
+  document.getElementById('modal-product-price').textContent = `価格: ¥${displayPrice.toLocaleString()}`;
 }
 
 function closeModal() {
@@ -189,8 +243,47 @@ function addToCartFromModal() {
   showLoadingOverlay(); // ローディングオーバーレイを表示
 
   try {
+    // 選択されたオプション情報を取得
+    const selectedOptions = [];
+    let optionPriceAdjustment = 0;
+    const optionsContainer = document.getElementById('modal-options-container');
+    const selectElements = optionsContainer.querySelectorAll('.option-select');
+
+    selectElements.forEach(selectEl => {
+      const selectedOptionValue = selectEl.value;
+      const [value, pricePart] = selectedOptionValue.split('|');
+      const priceAdjustment = parseInt(pricePart);
+
+      // 「なし」オプションが選択された場合はselectedOptionsに追加しない
+      if (value !== 'なし') {
+        const groupName = selectEl.previousElementSibling.textContent.replace(':', ''); // ラベルからグループ名を取得
+        selectedOptions.push({
+          groupName: groupName,
+          optionValue: value,
+          priceAdjustment: priceAdjustment
+        });
+      }
+      optionPriceAdjustment += priceAdjustment; // 「なし」の場合も価格調整は0として加算
+    });
+
     // カートを更新 (加算)
-    cart[currentProduct.id].quantity = newTotalQuantity; // 合計数量を代入
+    // カート内のアイテムを一意に識別するために、商品IDと選択されたオプションの組み合わせを使用
+    const cartItemId = currentProduct.id + JSON.stringify(selectedOptions);
+
+    if (!cart[cartItemId]) {
+      cart[cartItemId] = {
+        id: currentProduct.id,
+        name: currentProduct.name,
+        price: currentProduct.price,
+        imageUrl: currentProduct.imageUrl,
+        ingredients: currentProduct.ingredients,
+        allergens: currentProduct.allergens,
+        selectedOptions: selectedOptions,
+        optionPriceAdjustment: optionPriceAdjustment,
+        quantity: 0
+      };
+    }
+    cart[cartItemId].quantity += quantity; // 合計数量を加算
     
     const successMessage = `✅ ${currentProduct.name}を${quantity}個カートに追加しました。`;
     hideLoadingOverlay(); // ローディングオーバーレイを非表示
@@ -228,20 +321,31 @@ function renderCart() {
     for (const id in cart) {
       const item = cart[id];
       if (item.quantity > 0) {
-        const itemTotal = item.price * item.quantity;
+        const itemBasePrice = item.price;
+        const itemOptionPriceAdjustment = item.optionPriceAdjustment || 0;
+        const itemPriceWithOption = itemBasePrice + itemOptionPriceAdjustment;
+        const itemTotal = itemPriceWithOption * item.quantity;
         total += itemTotal;
         totalItemsCount += item.quantity; // 全商品の合計数量をカウント
+
+        let optionsDisplay = '';
+        if (item.selectedOptions && item.selectedOptions.length > 0) {
+          optionsDisplay = item.selectedOptions.map(opt => `${opt.groupName}: ${opt.optionValue}`).join(', ');
+          optionsDisplay = `<p class="cart-item-options">(${optionsDisplay})</p>`;
+        }
+
         detailHtml += `
           <div class="cart-item">
               <span class="item-name">${item.name}</span>
+              ${optionsDisplay}
               <span class="item-price">¥${itemTotal.toLocaleString()}</span>
               <div class="item-controls">
                   <div class="quantity-control">
-                      <button class="qty-button" onclick="updateCartItemQuantity('${item.id}', -1)">&minus;</button>
-                      <input type="number" class="item-quantity" value="${item.quantity}" min="1" max="${MAX_ITEM_QUANTITY}" onchange="updateCartItemQuantity('${item.id}', 0, this.value)">
-                      <button class="qty-button" onclick="updateCartItemQuantity('${item.id}', 1)">&plus;</button>
+                      <button class="qty-button" onclick="updateCartItemQuantity('${id}', -1)">&minus;</button>
+                      <input type="number" class="item-quantity" value="${item.quantity}" min="1" max="${MAX_ITEM_QUANTITY}" onchange="updateCartItemQuantity('${id}', 0, this.value)">
+                      <button class="qty-button" onclick="updateCartItemQuantity('${id}', 1)">&plus;</button>
                   </div>
-                  <button class="remove-item-button" onclick="removeCartItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>
+                  <button class="remove-item-button" onclick="removeCartItem('${id}')"><i class="fas fa-trash-alt"></i></button>
               </div>
           </div>
         `;
@@ -324,7 +428,13 @@ async function submitOrder() {
     return;
   }
   
-  const itemsToOrder = Object.values(cart).filter(item => item.quantity > 0);
+  const itemsToOrder = Object.values(cart).filter(item => item.quantity > 0).map(item => ({
+    id: item.id,
+    name: item.name,
+    price: item.price, // 基本価格
+    quantity: item.quantity,
+    selectedOptions: item.selectedOptions || [] // 選択されたオプション情報
+  }));
   
   if (itemsToOrder.length === 0) {
     // messageEl.textContent = 'エラー: 注文する商品がありません。'; // 削除
@@ -369,7 +479,12 @@ async function handleOrderSuccess(response) {
   
   if (response && response.status === 'success') {
     closeOrderModal(); // カートモーダルを閉じる
-    openResultModal('注文完了', '✅ 注文は正常に送信されました！');
+    let successMessage = '✅ 注文は正常に送信されました！';
+    if (response.orderId) {
+      successMessage += `\nご注文ID: ${response.orderId}`; // 注文IDを表示
+      sessionStorage.setItem('lastOrderId', response.orderId); // セッションストレージに保存
+    }
+    openResultModal('注文完了', successMessage);
     // フォームとカートをリセット
     document.getElementById('customerName').value = '';
     document.getElementById('notes').value = '';
@@ -415,6 +530,7 @@ window.onclick = function(event) {
   const productModal = document.getElementById('product-modal');
   const orderConfirmModal = document.getElementById('order-confirm-modal'); // 追加
   const resultModal = document.getElementById('result-modal'); // 追加
+  const orderStatusModal = document.getElementById('order-status-modal'); // 追加
 
   if (event.target == productModal) {
     closeModal();
@@ -424,6 +540,9 @@ window.onclick = function(event) {
   }
   if (event.target == resultModal) { // 追加
     closeResultModal();
+  }
+  if (event.target == orderStatusModal) { // 追加
+    closeOrderStatusModal();
   }
 }
 

@@ -16,6 +16,9 @@
 
     <header>
         <img src="./img/momoport_logo.png" alt="Momoport Logo" class="store-logo">
+        <div class="order-status-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
     </header>
   <div id="loading" style="text-align: center; font-size: 32px;">商品情報を読み込み中...</div>
   <div id="product-list">
@@ -34,12 +37,12 @@
             <p><strong>合計金額: <span id="total-price-detail">0</span>円</strong></p>
             
             <label for="customerName">お名前:</label>
-            <input type="text" id="customerName" placeholder="お名前を入力" required style="width: 95%; padding: 10px; margin-bottom: 10px;">
+            <input type="text" id="customerName" placeholder="お名前を入力" required>
 
             <label for="notes">特記事項:</label>
-            <textarea id="notes" placeholder="アレルギーなど特記事項があれば..." style="width: 95%; padding: 10px;"></textarea>
+            <textarea id="notes" placeholder="アレルギーなど特記事項があれば..."></textarea>
 
-            <button id="submit-order" class="submit-button" onclick="submitOrder()">注文確定</button>
+            <button id="submit-order" class="submit-button btn btn-primary" onclick="submitOrder()">注文確定</button>
             <p id="message" class="error"></p>
         </div>
     </div>
@@ -51,7 +54,7 @@
             <span id="item-count">商品 0 点</span><br>
             <span id="total-price-mini">¥ 0</span>
         </div>
-        <button class="view-cart-button" onclick="openOrderModal()">注文へ進む &gt;</button>
+        <button class="view-cart-button btn btn-primary" onclick="openOrderModal()">注文へ進む &gt;</button>
     </div>
 </div>
 
@@ -69,14 +72,18 @@
             <p id="modal-allergens"><strong>アレルギー:</strong> </p>
         </div>
 
+        <div id="modal-options-container">
+            <!-- オプション選択UIがここに動的に挿入されます -->
+        </div>
+
         <div id="modal-order-controls">
             <label>数量:</label>
             <div class="quantity-control">
-                <button class="qty-button" onclick="changeQuantity(-1)">&minus;</button>
+                <button class="qty-button btn btn-outline" onclick="changeQuantity(-1)">&minus;</button>
                 <input type="number" id="modal-quantity" value="1" min="1">
-                <button class="qty-button" onclick="changeQuantity(1)">&plus;</button>
+                <button class="qty-button btn btn-outline" onclick="changeQuantity(1)">&plus;</button>
             </div>
-            <button id="add-to-cart-button" onclick="addToCartFromModal()">カートに追加</button>
+            <button id="add-to-cart-button" class="btn btn-success" onclick="addToCartFromModal()">カートに追加</button>
         </div>
         
         <p id="modal-message" class="error"></p>
@@ -88,10 +95,25 @@
         <span class="close" onclick="closeResultModal()">&times;</span>
         <h2 id="result-modal-title"></h2>
         <p id="result-modal-message"></p>
-        <button onclick="closeResultModal()">閉じる</button>
+        <button class="btn btn-primary" onclick="closeResultModal()">閉じる</button>
+    </div>
+</div>
+
+<div id="order-status-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeOrderStatusModal()">&times;</span>
+        <h2>注文ステータス確認</h2>
+        <div class="input-group">
+            <label for="customerOrderId">注文ID:</label>
+            <input type="text" id="customerOrderId" placeholder="注文IDを入力してください">
+            <button id="checkOrderStatusBtn" class="btn btn-primary">ステータスを確認</button>
+        </div>
+        <div id="customerOrderStatusResult" class="message"></div>
+        <div id="customerOrderDetails"></div>
     </div>
 </div>
 
 <script src="./js/script.js"></script>
+<script src="./js/customer_order_status.js"></script>
 </body>
 </html>

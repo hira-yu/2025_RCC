@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品登録</title>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+      <div class="loading-spinner"></div>
+      <p>商品を登録中...</p>
+    </div>
+
+    <div class="container">
+        <h1>商品登録</h1>
+        <form id="product-register-form">
+            <div class="form-group">
+                <label for="productId">商品ID (自動生成されます)</label>
+                <input type="text" id="productId" disabled>
+            </div>
+            <div class="form-group">
+                <label for="productName">商品名</label>
+                <input type="text" id="productName" required>
+            </div>
+            <div class="form-group">
+                <label for="productPrice">価格</label>
+                <input type="number" id="productPrice" required min="0">
+            </div>
+            <div class="form-group">
+                <label for="productImage">商品画像</label>
+                <input type="file" id="productImage" accept="image/*">
+                <div id="imagePreview" style="margin-top: 10px; text-align: center;">
+                    <img src="" alt="画像プレビュー" style="max-width: 100%; max-height: 200px; display: none;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ingredients">原材料</label>
+                <textarea id="ingredients"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="allergens">アレルギー情報</label>
+                <textarea id="allergens"></textarea>
+            </div>
+            <div class="form-group">
+                <label>オプション設定</label>
+                <div id="optionsContainer">
+                    <!-- オプショングループがここに動的に追加されます -->
+                </div>
+                <button type="button" id="addOptionGroup" class="btn btn-secondary" style="margin-top: 10px;">オプショングループを追加</button>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">商品登録</button>
+            </div>
+            <div id="message" class="message" style="display: none;"></div>
+        </form>
+    </div>
+
+    <script src="./js/product_register.js"></script>
+</body>
+</html>

@@ -76,10 +76,15 @@ function renderOrders(orders) {
         acc[orderId].items.push({
             productName: currentOrder["商品名"],
             quantity: currentOrder["数量"],
-            itemAmount: currentOrder["合計金額"] // 商品ごとの金額
+            itemAmount: currentOrder["合計金額"],
+            selectedOptions: currentOrder["選択オプション"] || '' // 選択オプションを追加
         });
         // 注文全体の合計金額を計算
         acc[orderId].totalAmount += currentOrder["合計金額"];
+        // 注文全体の選択オプションを保持 (最初のアイテムのオプションを使用)
+        if (!acc[orderId].selectedOptions) {
+            acc[orderId].selectedOptions = currentOrder["選択オプション"] || '-';
+        }
         return acc;
     }, {});
 
@@ -95,7 +100,10 @@ function renderOrders(orders) {
         const productDetails = `
             <ul class="order-items-list">
                 ${order.items.map(item => `
-                    <li>${item.productName} x ${item.quantity} (${item.itemAmount}円)</li>
+                    <li>
+                        ${item.productName} x ${item.quantity} (${item.itemAmount}円)
+                        ${item.selectedOptions ? `<br><small>(${item.selectedOptions})</small>` : ''}
+                    </li>
                 `).join('')}
             </ul>
         `;
@@ -116,13 +124,14 @@ function renderOrders(orders) {
         // ステータス更新ボタン
         const updateButton = document.createElement('button');
         updateButton.textContent = '更新';
-        updateButton.className = 'update-status-btn';
+        updateButton.className = 'update-status-btn btn btn-primary';
         updateButton.onclick = () => updateOrderStatus(order.orderId, statusSelect.value);
 
         row.insertCell().textContent = order.orderId; // 注文ID
         row.insertCell().textContent = formattedDateTime;
         row.insertCell().textContent = order.customerName;
         row.insertCell().innerHTML = productDetails;
+        row.insertCell().textContent = order.selectedOptions || '-'; // 選択オプション列
         row.insertCell().textContent = order.totalAmount.toLocaleString() + '円';
         row.insertCell().textContent = order.notes || '-';
         
