@@ -6,6 +6,7 @@
     <title>商品登録</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/multi-select-dropdown.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -86,10 +87,7 @@
     <div class="container">
         <h1>商品登録</h1>
         <form id="product-register-form">
-            <div class="form-group">
-                <label for="productId">商品ID (自動生成されます)</label>
-                <input type="text" id="productId" disabled>
-            </div>
+
             <div class="form-group">
                 <label for="productName">商品名</label>
                 <input type="text" id="productName" required>
@@ -165,6 +163,7 @@
         </form>
     </div>
 
+    <script src="./js/multi-select-dropdown.js"></script>
     <script src="./js/product_register.js"></script>
 </body>
 </html>
