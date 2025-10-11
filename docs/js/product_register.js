@@ -128,6 +128,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.reset(); // フォームをリセット
                 imagePreview.src = ''; // プレビューをクリア
                 imagePreview.style.display = 'none';
+
+                // 特定原材料に準ずるものの選択をリセット
+                const recommendedAllergensSelect = document.getElementById('recommendedAllergensSelect');
+                if (recommendedAllergensSelect.multiSelectDropdownInstance) {
+                    recommendedAllergensSelect.multiSelectDropdownInstance.reset();
+                } else {
+                    // multiSelectDropdownInstance が存在しない場合のフォールバック
+                    Array.from(recommendedAllergensSelect.options).forEach(option => {
+                        option.selected = false;
+                    });
+                    recommendedAllergensSelect.dispatchEvent(new Event('change'));
+                }
+
+                // オプション入力欄をクリア
+                document.getElementById('optionsContainer').innerHTML = '';
             } else {
                 showMessage(`商品登録に失敗しました: ${result.message}`, 'error');
             }

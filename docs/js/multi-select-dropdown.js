@@ -12,6 +12,7 @@ class MultiSelectDropdown {
         this.selectedOptions = [];
         this.dropdown = null;
         this.init();
+        this.element.multiSelectDropdownInstance = this; // インスタンスを要素に格納
     }
 
     init() {
@@ -19,6 +20,17 @@ class MultiSelectDropdown {
         this.createDropdown();
         this.attachEvents();
         this.updateSelectedDisplay();
+    }
+
+    // ... 既存のメソッド ...
+
+    reset() {
+        this.selectedOptions = [];
+        Array.from(this.element.options).forEach(option => {
+            option.selected = false;
+        });
+        this.updateSelectedDisplay();
+        this.updateNativeSelect();
     }
 
     createDropdown() {
