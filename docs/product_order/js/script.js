@@ -232,7 +232,8 @@ function addToCartFromModal() {
     return;
   }
 
-  const existingQuantity = cart[currentProduct.id] ? cart[currentProduct.id].quantity : 0;
+  const cartItemId = currentProduct.id + JSON.stringify(selectedOptions);
+  const existingQuantity = cart[cartItemId] ? cart[cartItemId].quantity : 0;
   const newTotalQuantity = existingQuantity + quantity;
 
   if (newTotalQuantity > MAX_ITEM_QUANTITY) {
@@ -430,10 +431,10 @@ async function submitOrder() {
   
   const itemsToOrder = Object.values(cart).filter(item => item.quantity > 0).map(item => ({
     id: item.id,
-    name: item.name,
+    name: "​" + item.name,
     price: item.price, // 基本価格
     quantity: item.quantity,
-    selectedOptions: item.selectedOptions || [] // 選択されたオプション情報
+    selectedOptions: "​" + item.selectedOptions || [] // 選択されたオプション情報
   }));
   
   if (itemsToOrder.length === 0) {
