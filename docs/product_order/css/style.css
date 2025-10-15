@@ -75,29 +75,6 @@ h1 {
     font-size: 2em; 
     margin-bottom: 25px;
 }
-label {
-    font-size: 1.1em;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 30px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative; /* アイコン配置のために追加 */
-}
-
-.store-logo {
-    max-width: 200px;
-    height: auto;
-    margin-bottom: 0;
-    vertical-align: bottom;
-}
 
 /* 注文ステータスアイコン */
 .order-status-icon {

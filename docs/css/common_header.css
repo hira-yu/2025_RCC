@@ -1,0 +1,27 @@
+/* --- 共通ヘッダーのスタイル --- */
+header, .page-header {
+    text-align: center;
+    margin-bottom: 30px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative; /* アイコン配置のために追加 */
+}
+
+.header-logo {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 0;
+    vertical-align: bottom;
+}
+
+h1, .page-title {
+    color: #0056b3;
+    font-size: 2.5em;
+    margin: 0;
+    line-height: 3em;
+    display: inline;
+    position: absolute;
+    left: 2.5em;
+}
