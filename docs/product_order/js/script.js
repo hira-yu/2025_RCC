@@ -72,13 +72,13 @@ function displayProducts(products) {
   productListEl.innerHTML = '';
   
   products.forEach(product => {
-    // 初回はカートに商品オブジェクトを登録しておく
-    cart[product.id] = { 
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: 0
-    };
+    // ★ カートの初期化はaddToCartFromModalで行うため、ここからは削除
+    // cart[product.id] = { 
+    //   id: product.id,
+    //   name: product.name,
+    //   price: product.price,
+    //   quantity: 0
+    // };
 
     const card = document.createElement('div');
     card.className = 'product-card';
@@ -314,6 +314,7 @@ function updateCart(id, name, price, qtyStr) {
 // カートの更新 (renderCart関数を修正)
 // -------------------------------------------
 function renderCart() {
+    console.log('Cart content before rendering:', cart); // デバッグ用ログを追加
     let detailHtml = '';
     let total = 0;
     let totalItemsCount = 0; // 商品の種類の数
@@ -329,7 +330,7 @@ function renderCart() {
         totalItemsCount += item.quantity; // 全商品の合計数量をカウント
 
         let optionsDisplay = '';
-        if (item.selectedOptions && item.selectedOptions.length > 0) {
+        if (Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0) {
           optionsDisplay = item.selectedOptions.map(opt => `${opt.groupName}: ${opt.optionValue}`).join(', ');
           optionsDisplay = `<p class="cart-item-options">(${optionsDisplay})</p>`;
         }
@@ -430,10 +431,10 @@ async function submitOrder() {
   
   const itemsToOrder = Object.values(cart).filter(item => item.quantity > 0).map(item => ({
     id: item.id,
-    name: "​" + item.name,
+    name: item.name,
     price: item.price, // 基本価格
     quantity: item.quantity,
-    selectedOptions: "​" + item.selectedOptions || [] // 選択されたオプション情報
+    selectedOptions: item.selectedOptions || [] // 選択されたオプション情報
   }));
   
   if (itemsToOrder.length === 0) {
@@ -447,8 +448,8 @@ async function submitOrder() {
 
   const payload = {
     action: 'submitOrder',
-    customerName: customerName,
-    notes: notes,
+    customerName: "​" + customerName,
+    notes: "​" + notes,
     items: itemsToOrder
   };
 
