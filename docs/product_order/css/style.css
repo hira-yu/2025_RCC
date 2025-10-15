@@ -634,7 +634,6 @@ select:focus {
         gap: 10px;
     }
     .quantity-control {
-        width: 100%;
         justify-content: center;
     }
     .qty-button {
