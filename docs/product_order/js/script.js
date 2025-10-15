@@ -232,15 +232,6 @@ function addToCartFromModal() {
     return;
   }
 
-  const cartItemId = currentProduct.id + JSON.stringify(selectedOptions);
-  const existingQuantity = cart[cartItemId] ? cart[cartItemId].quantity : 0;
-  const newTotalQuantity = existingQuantity + quantity;
-
-  if (newTotalQuantity > MAX_ITEM_QUANTITY) {
-    openResultModal('エラー', `1つの商品の注文は${MAX_ITEM_QUANTITY}個までです。`);
-    return;
-  }
-
   showLoadingOverlay(); // ローディングオーバーレイを表示
 
   try {
@@ -267,9 +258,17 @@ function addToCartFromModal() {
       optionPriceAdjustment += priceAdjustment; // 「なし」の場合も価格調整は0として加算
     });
 
-    // カートを更新 (加算)
     // カート内のアイテムを一意に識別するために、商品IDと選択されたオプションの組み合わせを使用
     const cartItemId = currentProduct.id + JSON.stringify(selectedOptions);
+
+    const existingQuantity = cart[cartItemId] ? cart[cartItemId].quantity : 0;
+    const newTotalQuantity = existingQuantity + quantity;
+
+    if (newTotalQuantity > MAX_ITEM_QUANTITY) {
+      hideLoadingOverlay(); // エラーの場合はローディングオーバーレイを非表示
+      openResultModal('エラー', `1つの商品の注文は${MAX_ITEM_QUANTITY}個までです。`);
+      return;
+    }
 
     if (!cart[cartItemId]) {
       cart[cartItemId] = {
