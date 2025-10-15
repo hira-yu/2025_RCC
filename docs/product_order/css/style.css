@@ -570,3 +570,109 @@ select:focus {
 .order-items-list small {
     color: #666;
 }
+
+/* スマートフォン向け調整 */
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 14px; /* 基本フォントサイズを調整 */
+    }
+
+    /* 商品カード関連 */
+    #product-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* 商品カードの列数を調整 */
+        gap: 10px;
+    }
+    .product-card {
+        font-size: 1em; /* 商品カード全体のフォントサイズを調整 */
+        padding: 10px;
+        min-height: 200px;
+    }
+    .product-name {
+        font-size: 1.1em; /* 商品名のフォントサイズを調整 */
+        height: auto; /* 高さを自動調整 */
+    }
+    .product-price {
+        font-size: 1.2em; /* 価格のフォントサイズを調整 */
+    }
+
+    /* ミニカートバー関連 */
+    .mini-cart-bar {
+        width: 95%;
+        padding: 1em 0;
+    }
+    .cart-info {
+        font-size: 1.4em; /* カート情報のフォントサイズを調整 */
+    }
+    #total-price-mini {
+        font-size: 1.1em; /* 合計金額のフォントサイズを調整 */
+    }
+    .view-cart-button {
+        font-size: 1.2em; /* 「注文へ進む」ボタンのフォントサイズを調整 */
+        padding: 8px 12px;
+    }
+
+    /* モーダル関連 */
+    .modal-content {
+        font-size: 1em; /* モーダルコンテンツのフォントサイズを調整 */
+        padding: 15px;
+    }
+    .close {
+        font-size: 30px; /* 閉じるボタンのフォントサイズを調整 */
+    }
+    #modal-order-controls {
+        flex-direction: column; /* 数量コントロールを縦並びに */
+        gap: 10px;
+    }
+    .quantity-control {
+        width: 100%;
+        justify-content: center;
+    }
+    .qty-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1em;
+    }
+    #modal-quantity, .item-quantity {
+        width: 60px;
+        height: 40px;
+        font-size: 1em;
+    }
+    #add-to-cart-button {
+        width: 100%;
+        height: 50px;
+        font-size: 1em;
+    }
+
+    /* 注文確認モーダル */
+    #order-confirm-modal h2 {
+        font-size: 1.5em;
+    }
+    #order-confirm-modal label {
+        font-size: 0.9em;
+    }
+    #order-confirm-modal input[type="text"], #order-confirm-modal textarea {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+    #order-confirm-modal .submit-button {
+        padding: 12px;
+        font-size: 1.1em;
+    }
+
+    /* 注文ステータスアイコン */
+    .order-status-icon {
+        font-size: 2em;
+        top: 15px;
+        right: 15px;
+    }
+
+    /* ローディングオーバーレイ */
+    .loading-overlay {
+        font-size: 1.2em;
+    }
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 6px;
+    }
+}
