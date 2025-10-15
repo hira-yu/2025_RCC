@@ -5,6 +5,8 @@ const loadingEl = document.getElementById('loading');
 const errorMessageEl = document.getElementById('error-message');
 const ordersTbody = document.getElementById('orders-tbody');
 
+let pollingIntervalId; // ★ 追加: setIntervalのIDを保持する変数
+
 // 注文ステータスの選択肢
 const ORDER_STATUSES = [
     { value: "新規", label: "新規" },
@@ -111,6 +113,7 @@ function renderOrders(orders) {
         // ステータス選択ドロップダウン
         const statusSelect = document.createElement('select');
         statusSelect.className = 'status-select';
+        statusSelect.onfocus = () => clearInterval(pollingIntervalId); // ★ 追加: フォーカス時に自動更新を一時停止
         ORDER_STATUSES.forEach(status => {
             const option = document.createElement('option');
             option.value = status.value;
@@ -125,7 +128,7 @@ function renderOrders(orders) {
         const updateButton = document.createElement('button');
         updateButton.textContent = '更新';
         updateButton.className = 'update-status-btn btn btn-primary';
-        updateButton.onclick = () => updateOrderStatus(order.orderId, statusSelect.value);
+        updateButton.onclick = () => updateOrderStatus(order.orderId, statusSelect.value, updateButton); // ★ updateButtonを引数に追加
 
         row.insertCell().textContent = order.orderId; // 注文ID
         row.insertCell().textContent = formattedDateTime;
@@ -145,11 +148,31 @@ function renderOrders(orders) {
 }
 
 /**
+ * スナックバーを表示する
+ * @param {string} message - 表示するメッセージ
+ */
+function showSnackbar(message) {
+    const snackbar = document.getElementById("snackbar");
+    snackbar.textContent = message;
+    snackbar.className = "show";
+    setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+}
+
+/**
  * 注文ステータスを更新する
  * @param {number} orderId - 更新する注文のID (スプレッドシートの行番号)
  * @param {string} newStatus - 新しいステータス
+ * @param {HTMLElement} button - 更新ボタンの要素
  */
-async function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderId, newStatus, button) { // ★ button引数を追加
+    // ★ 自動更新を一時停止
+    clearInterval(pollingIntervalId);
+
+    if (button) { // ★ ボタンを無効化
+        button.disabled = true;
+        button.textContent = '更新中...';
+    }
+
     const payload = {
         action: 'updateOrderStatus',
         orderId: orderId,
@@ -171,14 +194,21 @@ async function updateOrderStatus(orderId, newStatus) {
 
         const result = await response.json();
         if (result.status === 'success') {
-            alert(`注文ID ${orderId} のステータスを ${newStatus} に更新しました。`);
-            loadOrders(); // 更新後、リストを再読み込み
+            showSnackbar(`注文ID ${orderId} のステータスを ${newStatus} に更新しました。`);
+            await loadOrders();
         } else {
             throw new Error(result.message || 'ステータス更新に失敗しました。');
         }
     } catch (error) {
         console.error('ステータス更新に失敗しました:', error);
         displayError(`ステータス更新に失敗しました: ${error.message}`);
+    } finally {
+        if (button) { // ★ ボタンを有効化
+            button.disabled = false;
+            button.textContent = '更新';
+        }
+        // ★ 自動更新を再開
+        pollingIntervalId = setInterval(() => loadOrders(false), POLLING_INTERVAL_MS);
     }
 }
 
@@ -200,5 +230,5 @@ async function loadOrders(initialLoad = false) {
 // ページロード時に注文データを読み込み、ポーリングを開始
 window.onload = () => {
     loadOrders(true); // 初回ロードであることを伝える
-    setInterval(() => loadOrders(false), POLLING_INTERVAL_MS); // ポーリング時は初回ロードではない
+    pollingIntervalId = setInterval(() => loadOrders(false), POLLING_INTERVAL_MS); // ポーリング時は初回ロードではない
 };

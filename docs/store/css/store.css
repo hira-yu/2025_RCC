@@ -95,16 +95,31 @@ h1 {
 
 .status-select {
     width: 100%;
-    padding: 8px;
+    padding: 8px; /* 8pxに戻す */
     border-radius: 4px;
-    border: 1px solid #ced4da;
-    background-color: #fff;
+    border: 1px solid #ced4da; /* ボーダーを復活 */
+    background-color: #fff; /* 白に戻す */
+    color: #333; /* デフォルト色に戻す */
     font-size: 0.95em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%23333333%22%20d%3D%22M119.5%20326.9L3.5%20209.1c-4.7-4.7-4.7-12.3%200-17l7.1-7.1c4.7-4.7%2012.3-4.7%2017%200L128%20297.1l100.5-100.5c4.7-4.7%2012.3-4.7%2017%200l7.1%207.1c4.7%204.7%204.7%2012.3%200%2017L136.5%20326.9c-4.7%204.6-12.3%204.6-17%200z%22%2F%3E%3C%2Fsvg%3E'); /* カスタム矢印の色を黒に */
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%;
+    background-size: 0.65em auto;
+    position: relative;
+}
+
+.status-select:hover {
+    background-color: #e2e6ea; /* テーブルのホバー色に合わせる */
 }
 
 .update-status-btn {
     display: block;
     width: 100%;
+    min-width: 80px; /* ★ 追加: テキストの長さに合わせて幅が変化しないように */
     padding: 8px 12px;
     margin-top: 5px;
     border: none;
@@ -144,4 +159,48 @@ h1 {
 .status-cancelled {
     color: #dc3545;
     font-weight: bold;
+}
+
+/* スナックバーのスタイル */
+#snackbar {
+    visibility: hidden; /* デフォルトでは非表示 */
+    min-width: 250px; /* 最小幅 */
+    /* margin-left: -125px; */ /* 削除 */
+    background-color: #333; /* 背景色 */
+    color: #fff; /* 文字色 */
+    text-align: center; /* テキストを中央揃え */
+    border-radius: 2px; /* 角を丸くする */
+    padding: 16px; /* パディング */
+    position: fixed; /* 固定位置 */
+    z-index: 1; /* 他の要素より前面 */
+    left: 50%; /* 中央に配置 */
+    bottom: 30px; /* 下から30pxの位置 */
+    font-size: 17px; /* フォントサイズ */
+    transform: translateX(-50%); /* ★ 追加: 中央に配置 */
+}
+
+#snackbar.show {
+    visibility: visible; /* 表示 */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
 }
