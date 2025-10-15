@@ -444,6 +444,7 @@ select:focus {
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid #eee;
+    flex-wrap: wrap; /* 追加: 要素が収まらない場合に折り返す */
 }
 
 .cart-item:last-child {
@@ -454,18 +455,26 @@ select:focus {
     flex-grow: 1;
     font-weight: bold;
     order: 1;
+    white-space: nowrap; /* 追加: 改行させない */
+    overflow: hidden; /* 追加: はみ出た部分を隠す */
+    text-overflow: ellipsis; /* 追加: はみ出た部分を...で表示 */
+    min-width: 0; /* flexアイテムの最小幅を0に設定 */
 }
 .cart-item .item-price {
     margin-right: 10px;
     font-weight: bold;
     order: 2;
+    flex-shrink: 0; /* 追加: 縮小させない */
 }
 
 .cart-item .item-controls {
     display: flex;
     align-items: center;
     gap: 5px;
-    order: 3;
+    order: 4; /* 変更: item-name, item-price の後に来るように order を調整 */
+    flex-basis: 100%; /* 追加: 新しい行を占有する */
+    justify-content: flex-end; /* 追加: 右寄せにする */
+    margin-top: 5px; /* 追加: 上部に少し余白 */
 }
 
 /* .cart-item .item-quantity のスタイルは#modal-quantityと共通化するため削除 */
@@ -490,6 +499,7 @@ select:focus {
     font-size: 1.2em; /* 大きくする */
     margin-right: 10px; /* 右側に間隔 */
     order: 0; /* 一番左に配置 */
+    flex-shrink: 0; /* 追加: 縮小させない */
 }
 
 .empty-cart-message {
