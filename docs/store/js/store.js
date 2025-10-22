@@ -44,7 +44,7 @@ async function fetchOrders() {
         return data;
     } catch (error) {
         console.error('注文データの取得に失敗しました:', error);
-        displayError('注文データの取得に失敗しました。GASのURLまたは設定を確認してください。');
+        displayError('注文データの取得に失敗しました。インターネット接続を確認してください。');
         return [];
     }
 }

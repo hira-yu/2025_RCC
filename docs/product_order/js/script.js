@@ -513,7 +513,7 @@ function handleError(error) {
   }
 
   console.error("致命的なエラーが発生しました:", error);
-  const errorMessage = '❌ エラーが発生しました: ' + (typeof error === 'string' ? error : JSON.stringify(error));
+  const errorMessage = typeof error === 'string' ? error : JSON.stringify(error);
   // messageEl.textContent = errorMessage; // 削除
   
   // closeOrderModal(); // カートモーダルを閉じる - 削除

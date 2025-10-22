@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>集会所利用予約 - ももポート</title>
+  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../css/common_header.css">
+  <link rel="stylesheet" href="./css/style.css?v=0.2">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+      <div class="loading-spinner"></div>
+      <p>予約を送信中...</p>
+    </div>
+
+    <header class="page-header">
+        <img src="../img/momoport_logo.png" alt="ももポートロゴ" class="header-logo">
+    </header>
+
+  <div id="community-hall-reservation-form">
+    <h2>ももポート利用予約</h2>
+    <form id="reservationForm">
+        <div class="form-group">
+            <label for="reservationDate">利用日:</label>
+            <input type="date" id="reservationDate" required>
+        </div>
+        <div class="form-group">
+            <label for="startTime">開始時刻:</label>
+            <input type="time" id="startTime" required>
+        </div>
+        <div class="form-group">
+            <label for="endTime">終了時刻:</label>
+            <input type="time" id="endTime" required>
+        </div>
+        <div class="form-group">
+            <label for="purpose">利用目的:</label>
+            <input type="text" id="purpose" placeholder="例: 会議、イベント" required>
+        </div>
+        <div class="form-group">
+            <label for="participants">参加人数:</label>
+            <input type="number" id="participants" min="1" value="1" required>
+        </div>
+        <div class="form-group">
+            <label for="contactName">代表者名:</label>
+            <input type="text" id="contactName" placeholder="お名前" required>
+        </div>
+        <div class="form-group">
+            <label for="contactEmail">メールアドレス:</label>
+            <input type="email" id="contactEmail" placeholder="メールアドレス" required>
+        </div>
+        <div class="form-group">
+            <label for="contactPhone">電話番号:</label>
+            <input type="tel" id="contactPhone" placeholder="電話番号">
+        </div>
+        <div class="form-group">
+            <label for="equipment">必要な備品 (複数選択可):</label>
+            <select id="equipment" multiple>
+                <option value="projector">プロジェクター</option>
+                <option value="whiteboard">ホワイトボード</option>
+                <option value="microphone">マイク</option>
+                <option value="tables">追加テーブル</option>
+                <option value="chairs">追加椅子</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="notes">特記事項:</label>
+            <textarea id="notes" placeholder="その他ご要望など"></textarea>
+        </div>
+        <button type="button" id="confirmReservationBtn" class="btn btn-primary">予約内容を確認</button>
+    </form>
+  </div>
+
+  <div id="order-confirm-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeOrderModal()">&times;</span>
+        
+        <div class="order-summary-content">
+            <h2>ご予約内容の確認</h2>
+            <div id="reservation-details">
+                <!-- 予約詳細がここに動的に挿入されます -->
+                <p class="empty-cart-message">予約情報がありません。</p>
+            </div>
+            <p><strong>利用料金: <span id="total-price-detail">0</span>円</strong></p>
+
+            <button id="submit-reservation" class="submit-button btn btn-primary">予約確定</button>
+            <p id="message" class="error"></p>
+        </div>
+    </div>
+</div>
+
+<div id="result-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeResultModal()">&times;</span>
+        <h2 id="result-modal-title"></h2>
+        <p id="result-modal-message"></p>
+        <button class="btn btn-primary" onclick="closeResultModal()">閉じる</button>
+    </div>
+</div>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
