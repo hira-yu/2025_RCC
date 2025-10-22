@@ -73,13 +73,13 @@ function openReservationConfirmModal() {
   const reservationDate = reservationDateInput.value;
   const startTime = startTimeInput.value;
   const endTime = endTimeInput.value;
-  const purpose = purposeInput.value;
+  const purpose = "​" + purposeInput.value;
   const participants = participantsInput.value;
-  const contactName = contactNameInput.value;
+  const contactName = "​" + contactNameInput.value;
   const contactEmail = contactEmailInput.value;
-  const contactPhone = contactPhoneInput.value;
+  const contactPhone = "​" + contactPhoneInput.value;
   const selectedEquipment = Array.from(equipmentSelect.selectedOptions).map(option => option.textContent);
-  const notes = notesInput.value;
+  const notes = "​" + notesInput.value;
 
   // 予約情報をオブジェクトにまとめる
   currentReservation = {
