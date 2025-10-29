@@ -569,7 +569,7 @@ window.onload = loadProducts;
 
 // LINEログイン関連の定数
 const LINE_CHANNEL_ID = '2008380510'; // あなたのLINEチャネルID
-const GAS_WEB_APP_URL_LINE_LOGIN = 'https://script.google.com/macros/s/AKfycbwPgpBH58AH61SzAvPgxv7gUbmVeFfMldneO8XMQcA_BdCpmBRKDjyqwbYmslLB64vq/exec'; // あなたのGASウェブアプリのURL
+const GAS_WEB_APP_URL_LINE_LOGIN = 'hhttps://hira-yu.github.io/?error=line_login_failed'; // あなたのGASウェブアプリのURL
 
 document.addEventListener('DOMContentLoaded', () => {
     const lineLoginButton = document.getElementById('line-login-button');
