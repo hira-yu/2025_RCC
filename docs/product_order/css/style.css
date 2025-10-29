@@ -80,9 +80,9 @@ h1 {
 .order-status-icon {
     position: absolute;
     top: 20px;
-    right: 80px;
+    right: 20px;
     font-size: 2.5em;
-    color: #000;
+    color: #007bff;
     cursor: pointer;
     transition: color 0.3s ease;
 }
@@ -94,9 +94,9 @@ h1 {
 .order-history-icon {
     position: absolute;
     top: 20px;
-    right: 20px;
+    right: 80px;
     font-size: 2.5em;
-    color: #007bff;
+    color: #000;
     cursor: pointer;
     transition: color 0.3s ease;
 }
@@ -694,4 +694,16 @@ select:focus {
         height: 40px;
         border-width: 6px;
     }
+}
+
+.line-login-container {
+    position: absolute;
+    top: 20px;
+    right: 140px; /* Adjust this value to place it to the left of order-history-icon (right: 80px) */
+    z-index: 10; /* Ensure it's above other elements if needed */
+}
+
+.line-login-button img {
+    height: 40px; /* Adjust size as needed */
+    width: auto;
 }
