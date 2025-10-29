@@ -42,9 +42,9 @@ function closeResultModal() {
   document.getElementById('result-modal').style.display = 'none';
 }
 
-// -------------------------------------------
+// ------------------------------------------- 
 // 予約フォームの初期化
-// -------------------------------------------
+// ------------------------------------------- 
 function initializeReservationForm() {
   // 今日の日付をデフォルト値に設定
   const today = new Date();
@@ -59,9 +59,9 @@ function initializeReservationForm() {
   submitReservationBtn.addEventListener('click', submitReservation);
 }
 
-// -------------------------------------------
+// ------------------------------------------- 
 // 予約確認モーダルの制御
-// -------------------------------------------
+// ------------------------------------------- 
 function openReservationConfirmModal() {
   // フォームのバリデーション
   if (!reservationForm.checkValidity()) {
@@ -119,9 +119,9 @@ function closeReservationConfirmModal() {
   reservationConfirmModal.style.display = 'none';
 }
 
-// -------------------------------------------
+// ------------------------------------------- 
 // 予約データの送信
-// -------------------------------------------
+// ------------------------------------------- 
 async function submitReservation() {
   submitReservationBtn.disabled = true;
   showLoadingOverlay();
@@ -175,9 +175,9 @@ async function handleReservationSuccess(response) {
   }
 }
 
-// -------------------------------------------
+// ------------------------------------------- 
 // エラーハンドリング関数 
-// -------------------------------------------
+// ------------------------------------------- 
 function handleError(error) {
   hideLoadingOverlay();
   submitReservationBtn.disabled = false;
@@ -189,9 +189,9 @@ function handleError(error) {
   openResultModal('エラー', errorMessage);
 }
 
-// -------------------------------------------
+// ------------------------------------------- 
 // その他のイベントリスナー
-// -------------------------------------------
+// ------------------------------------------- 
 // モーダル外クリックで閉じる処理
 window.onclick = function(event) {
   const reservationConfirmModal = document.getElementById('order-confirm-modal');
@@ -206,3 +206,39 @@ window.onclick = function(event) {
 }
 
 window.onload = initializeReservationForm;
+
+// LINEログイン関連の定数
+const LINE_CHANNEL_ID = '2008380510'; // あなたのLINEチャネルID
+const GAS_WEB_APP_URL_LINE_LOGIN = 'https://script.google.com/macros/s/AKfycbwPgpBH58AH61SzAvPgxv7gUbmVeFfMldneO8XMQcA_BdCpmBRKDjyqwbYmslLB64vq/exec'; // あなたのGASウェブアプリのURL
+
+document.addEventListener('DOMContentLoaded', () => {
+    const lineLoginButton = document.getElementById('line-login-button');
+    if (lineLoginButton) {
+        lineLoginButton.addEventListener('click', (event) => {
+            event.preventDefault(); // デフォルトのリンク動作をキャンセル
+
+            const currentPath = window.location.pathname; // 現在のページのパスを取得
+            const encodedPath = btoa(currentPath); // Base64エンコード
+            const state = `${generateRandomString(10)}_${encodedPath}`; // 簡易的なstate生成
+
+            const authUrl = 'https://access.line.me/oauth2/v2.1/authorize?' +
+                'response_type=code&' +
+                'client_id=' + LINE_CHANNEL_ID + '&' +
+                'redirect_uri=' + encodeURIComponent(GAS_WEB_APP_URL_LINE_LOGIN) + '&' +
+                'state=' + state + '&' +
+                'scope=profile%20openid';
+
+            window.location.href = authUrl;
+        });
+    }
+});
+
+// ランダムな文字列を生成するヘルパー関数（state用）
+function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
