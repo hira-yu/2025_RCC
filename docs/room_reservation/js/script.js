@@ -205,6 +205,21 @@ window.onclick = function(event) {
   }
 }
 
+// URLパラメータからLINEユーザーIDを取得し、sessionStorageに保存
+const urlParams = new URLSearchParams(window.location.search);
+const lineUserIdFromUrl = urlParams.get('lineUserId');
+if (lineUserIdFromUrl) {
+    sessionStorage.setItem('lineUserId', lineUserIdFromUrl);
+    // URLからlineUserIdパラメータを削除してリロード（URLをクリーンにするため）
+    const newUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
+}
+
+// sessionStorageからLINEユーザーIDを取得するヘルパー関数
+function getLineUserId() {
+    return sessionStorage.getItem('lineUserId');
+}
+
 window.onload = initializeReservationForm;
 
 // LINEログイン関連の定数

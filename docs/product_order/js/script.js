@@ -447,8 +447,10 @@ async function submitOrder() {
   }
   showLoadingOverlay(); // ローディングオーバーレイを表示
 
+  const lineUserId = getLineUserId(); // LINEユーザーIDを取得
   const payload = {
     action: 'submitOrder',
+    lineUserId: lineUserId, // LINEユーザーIDを追加
     customerName: "​" + customerName,
     notes: "​" + notes,
     items: itemsToOrder
@@ -548,6 +550,21 @@ window.onclick = function(event) {
   }
 }
 
+// URLパラメータからLINEユーザーIDを取得し、sessionStorageに保存
+const urlParams = new URLSearchParams(window.location.search);
+const lineUserIdFromUrl = urlParams.get('lineUserId');
+if (lineUserIdFromUrl) {
+    sessionStorage.setItem('lineUserId', lineUserIdFromUrl);
+    // URLからlineUserIdパラメータを削除してリロード（URLをクリーンにするため）
+    const newUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
+}
+
+// sessionStorageからLINEユーザーIDを取得するヘルパー関数
+function getLineUserId() {
+    return sessionStorage.getItem('lineUserId');
+}
+
 window.onload = loadProducts;
 
 // LINEログイン関連の定数
@@ -584,4 +601,120 @@ function generateRandomString(length) {
         result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return result;
+}
+
+// 注文履歴モーダル関連の要素
+const orderHistoryModal = document.getElementById('order-history-modal');
+const orderHistoryList = document.getElementById('order-history-list');
+const orderHistoryIcon = document.getElementById('order-history-icon');
+
+// ------------------------------------------- 
+// 注文履歴モーダル制御
+// ------------------------------------------- 
+function openOrderHistoryModal() {
+    const lineUserId = getLineUserId();
+    if (!lineUserId) {
+        openResultModal('エラー', 'LINEログインが必要です。\nLINEでログインしてから注文履歴を確認してください。');
+        return;
+    }
+    orderHistoryModal.style.display = 'inline-flex';
+    loadUserOrders(lineUserId);
+}
+
+function closeOrderHistoryModal() {
+    orderHistoryModal.style.display = 'none';
+}
+
+async function loadUserOrders(lineUserId) {
+    orderHistoryList.innerHTML = '<p>注文履歴を読み込み中...</p>';
+    try {
+        const response = await fetch(`${GAS_WEB_APP_URL}?action=getUserOrders&lineUserId=${lineUserId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result.status === 'success') {
+            displayOrderHistory(result.orders);
+        } else {
+            orderHistoryList.innerHTML = `<p class="error">${result.error || '注文履歴の取得に失敗しました。'}</p>`;
+        }
+    } catch (error) {
+        orderHistoryList.innerHTML = `<p class="error">注文履歴の取得中にエラーが発生しました: ${error.message}</p>`;
+        console.error("注文履歴取得エラー:", error);
+    }
+}
+
+function displayOrderHistory(orders) {
+    if (!orders || orders.length === 0) {
+        orderHistoryList.innerHTML = '<p class="empty-history-message">注文履歴がありません。</p>';
+        return;
+    }
+
+    let historyHtml = '';
+    orders.forEach(order => {
+        let itemsHtml = '';
+        let orderTotal = 0;
+        order.items.forEach(item => {
+            let itemPriceWithOption = item.price;
+            let optionsDisplay = '';
+            if (Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0) {
+                optionsDisplay = item.selectedOptions.map(opt => `${opt.groupName}: ${opt.optionValue}`).join(', ');
+                optionsDisplay = ` (${optionsDisplay})`;
+            }
+            orderTotal += (itemPriceWithOption + item.optionPriceAdjustment) * item.quantity;
+            itemsHtml += `
+                <li>${item.name}${optionsDisplay} x ${item.quantity}個 - ¥${((itemPriceWithOption + item.optionPriceAdjustment) * item.quantity).toLocaleString()}</li>
+            `;
+        });
+
+        historyHtml += `
+            <div class="order-history-item">
+                <h3>注文ID: ${order.orderId}</h3>
+                <p>注文日時: ${order.orderDateTime}</p>
+                <p>ステータス: ${order.status}</p>
+                <p>合計金額: ¥${orderTotal.toLocaleString()}</p>
+                <h4>注文商品:</h4>
+                <ul>
+                    ${itemsHtml}
+                </ul>
+            </div>
+        `;
+    });
+    orderHistoryList.innerHTML = historyHtml;
+}
+
+// ------------------------------------------- 
+// イベントリスナーの追加
+// ------------------------------------------- 
+document.addEventListener('DOMContentLoaded', () => {
+    // 既存のDOMContentLoadedイベントリスナーに注文履歴アイコンのイベントを追加
+    const orderHistoryIcon = document.getElementById('order-history-icon');
+    if (orderHistoryIcon) {
+        orderHistoryIcon.addEventListener('click', openOrderHistoryModal);
+    }
+});
+
+// モーダル外クリックで閉じる処理に注文履歴モーダルを追加
+window.onclick = function(event) {
+  const productModal = document.getElementById('product-modal');
+  const orderConfirmModal = document.getElementById('order-confirm-modal');
+  const resultModal = document.getElementById('result-modal');
+  const orderStatusModal = document.getElementById('order-status-modal');
+  const orderHistoryModal = document.getElementById('order-history-modal'); // 追加
+
+  if (event.target == productModal) {
+    closeModal();
+  }
+  if (event.target == orderConfirmModal) {
+    closeOrderModal();
+  }
+  if (event.target == resultModal) {
+    closeResultModal();
+  }
+  if (event.target == orderStatusModal) {
+    closeOrderStatusModal();
+  }
+  if (event.target == orderHistoryModal) { // 追加
+    closeOrderHistoryModal();
+  }
 }
