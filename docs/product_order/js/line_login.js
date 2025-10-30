@@ -1,7 +1,7 @@
 document.getElementById('line-login-button').addEventListener('click', function(e) {
     e.preventDefault(); // デフォルトのリンク動作をキャンセル
 
-    const redirectToPath = '/docs/product_order/index.html'; // このページのパス
+    const redirectToPath = '/2025_RCC/product_order/index.html'; // このページのパス
 
     // スターサーバーのPHPスクリプトを呼び出してLINEログインURLを取得
     fetch(`https://hirayu6121.stars.ne.jp/php/generate_line_login_url.php?path=${encodeURIComponent(redirectToPath)}`)
