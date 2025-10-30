@@ -221,39 +221,3 @@ function getLineUserId() {
 }
 
 window.onload = initializeReservationForm;
-
-// LINEログイン関連の定数
-const LINE_CHANNEL_ID = '2008380510'; // あなたのLINEチャネルID
-const GAS_WEB_APP_URL_LINE_LOGIN = 'http://hirayu6121.stars.ne.jp//php/line_login_callback.php'; // あなたのGASウェブアプリのURL
-
-document.addEventListener('DOMContentLoaded', () => {
-    const lineLoginButton = document.getElementById('line-login-button');
-    if (lineLoginButton) {
-        lineLoginButton.addEventListener('click', (event) => {
-            event.preventDefault(); // デフォルトのリンク動作をキャンセル
-
-            const currentPath = window.location.pathname; // 現在のページのパスを取得
-            const encodedPath = btoa(currentPath); // Base64エンコード
-            const state = `${generateRandomString(10)}_${encodedPath}`; // 簡易的なstate生成
-
-            const authUrl = 'https://access.line.me/oauth2/v2.1/authorize?' +
-                'response_type=code&' +
-                'client_id=' + LINE_CHANNEL_ID + '&' +
-                'redirect_uri=' + encodeURIComponent(GAS_WEB_APP_URL_LINE_LOGIN) + '&' +
-                'state=' + state + '&' +
-                'scope=profile%20openid';
-
-            window.location.href = authUrl;
-        });
-    }
-});
-
-// ランダムな文字列を生成するヘルパー関数（state用）
-function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-}
