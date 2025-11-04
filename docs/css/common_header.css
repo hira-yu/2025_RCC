@@ -29,11 +29,30 @@ h1, .page-title {
 .line-login-container {
     position: absolute;
     top: 20px;
-    right: 140px; /* Adjust this value to place it to the left of order-history-icon (right: 80px) */
+    right: 20px; /* Adjust this value to place it to the left of order-history-icon (right: 80px) */
     z-index: 10; /* Ensure it's above other elements if needed */
 }
 
 .line-login-button img {
-    height: 40px; /* Adjust size as needed */
+    height: 2.8em; /* Adjust size as needed */
     width: auto;
+    vertical-align: bottom;
+}
+
+@media (max-width: 768px) { /* スマートフォンなどの小さい画面 */
+    h1, .page-title {
+        position: static; /* 絶対配置を解除 */
+        text-align: center; /* 中央寄せ */
+        left: auto; /* leftプロパティをリセット */
+        line-height: normal; /* 行の高さをリセット */
+        font-size: 1.8em; /* フォントサイズを調整 */
+    }
+
+    .line-login-container {
+        position: static; /* 絶対配置を解除 */
+        right: auto; /* rightプロパティをリセット */
+        top: auto; /* topプロパティをリセット */
+        margin-top: 10px; /* 上部に少し余白を追加 */
+        margin-top: 0; /* 既存のmargin-topをリセット */
+    }
 }

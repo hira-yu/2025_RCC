@@ -80,7 +80,7 @@ h1 {
 .order-status-icon {
     position: absolute;
     top: 20px;
-    right: 20px;
+    right: 90px;
     font-size: 2.5em;
     color: #007bff;
     cursor: pointer;
@@ -94,7 +94,7 @@ h1 {
 .order-history-icon {
     position: absolute;
     top: 20px;
-    right: 80px;
+    right: 140px;
     font-size: 2.5em;
     color: #000;
     cursor: pointer;
@@ -678,11 +678,24 @@ select:focus {
         font-size: 1.1em;
     }
 
+    .icon_box {
+        display: flex;
+        justify-content: flex-end; /* 右寄せ */
+        align-items: center; /* 垂直方向中央揃え */
+        gap: 20px; /* 要素間のスペース */
+        position: static; /* flexboxの親要素として振る舞うように */
+        width: 100%; /* 親要素の幅いっぱいに広げる */
+        padding-right: 15px; /* 右端に少し余白 */
+    }
+
     /* 注文ステータスアイコン */
     .order-status-icon {
-        font-size: 2em;
-        top: 15px;
-        right: 15px;
+        position: static; /* flexアイテムとして振る舞うように */
+    }
+
+    /* 注文履歴アイコン */
+    .order-history-icon {
+        position: static; /* flexアイテムとして振る舞うように */
     }
 
     /* ローディングオーバーレイ */

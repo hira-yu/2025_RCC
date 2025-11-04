@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>オンライン注文 - ももポート</title>
   <link rel="icon" href="../favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../css/common_header.css?v0.1">
-  <link rel="stylesheet" href="./css/style.css?v=0.4">
+  <link rel="stylesheet" href="../css/common_header.css?v0.2">
+  <link rel="stylesheet" href="./css/style.css?v=0.5">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -17,16 +17,18 @@
 
     <header class="page-header">
         <img src="../img/momoport_logo.png" alt="ももポートロゴ" class="header-logo">
-        <div class="line-login-container">
-            <a href="#" id="line-login-button" class="line-login-button">
-                <img src="../img/btn_base.png" alt="LINEでログイン">
-            </a>
-        </div>
-        <div class="order-status-icon">
-            <i class="fas fa-receipt"></i>
-        </div>
-        <div class="order-history-icon" id="order-history-icon">
-            <i class="fas fa-history"></i>
+        <div class="icon_box">
+            <div class="order-history-icon" id="order-history-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            <div class="order-status-icon">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <div class="line-login-container">
+                <a href="#" id="line-login-button" class="line-login-button">
+                    <img src="../img/btn_base.png" alt="LINEでログイン">
+                </a>
+            </div>
         </div>
     </header>
   <div id="loading" style="text-align: center; font-size: 32px;">商品情報を読み込み中...</div>
