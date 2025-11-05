@@ -332,4 +332,16 @@ function getLineUserId() {
     return sessionStorage.getItem('lineUserId');
 }
 
+// URLパラメータからLINEユーザー名を取得し、入力欄に設定
+const lineNameFromUrl = urlParams.get('lineName');
+if (lineNameFromUrl) {
+    const parentNameInput = document.getElementById('parentName');
+    if (parentNameInput && !parentNameInput.value) { // 既に値がなければ自動入力
+        parentNameInput.value = decodeURIComponent(lineNameFromUrl);
+    }
+    // URLからlineNameパラメータを削除（URLをクリーンにするため）
+    const newUrl = window.location.origin + window.location.pathname + window.location.search.replace(/&?lineName=[^&]*/, '');
+    window.history.replaceState({}, document.title, newUrl);
+}
+
 window.onload = initializeReservationForm;

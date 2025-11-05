@@ -565,6 +565,18 @@ function getLineUserId() {
     return sessionStorage.getItem('lineUserId');
 }
 
+// URLパラメータからLINEユーザー名を取得し、入力欄に設定
+const lineNameFromUrl = urlParams.get('lineName');
+if (lineNameFromUrl) {
+    const customerNameInput = document.getElementById('customerName');
+    if (customerNameInput && !customerNameInput.value) { // 既に値がなければ自動入力
+        customerNameInput.value = decodeURIComponent(lineNameFromUrl);
+    }
+    // URLからlineNameパラメータを削除（URLをクリーンにするため）
+    const newUrl = window.location.origin + window.location.pathname + window.location.search.replace(/&?lineName=[^&]*/, '');
+    window.history.replaceState({}, document.title, newUrl);
+}
+
 window.onload = loadProducts;
 
 // 注文履歴モーダル関連の要素
