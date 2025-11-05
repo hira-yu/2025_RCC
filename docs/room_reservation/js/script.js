@@ -9,6 +9,7 @@ const messageEl = document.getElementById('message');
 // フォーム要素
 const reservationForm = document.getElementById('reservationForm');
 const reservationDateInput = document.getElementById('reservationDate');
+const numberOfWeeksInput = document.getElementById('numberOfWeeks');
 const startTimeInput = document.getElementById('startTime');
 const endTimeInput = document.getElementById('endTime');
 const purposeInput = document.getElementById('purpose');
@@ -23,6 +24,7 @@ const submitReservationBtn = document.getElementById('submit-reservation');
 
 let currentReservation = {}; // 現在の予約情報を保持
 let isSubmitting = false; // 多重送信防止フラグ
+let allReservationDates = []; // 連続予約の全日付を保持する配列
 
 function showLoadingOverlay() {
   document.getElementById('loading-overlay').style.display = 'flex';
@@ -46,12 +48,36 @@ function closeResultModal() {
 // 予約フォームの初期化
 // ------------------------------------------- 
 function initializeReservationForm() {
-  // 今日の日付をデフォルト値に設定
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため+1
-  const dd = String(today.getDate()).padStart(2, '0');
+  const now = new Date();
+  let searchStartDate = new Date(now);
+  let message = '';
+
+  // 17時を過ぎていたら、検索開始日を翌日にする
+  if (now.getHours() >= 17) {
+    searchStartDate.setDate(now.getDate() + 1);
+    message = '※現在時刻が17時を過ぎているため、最短予約日は翌々日以降となります。\n';
+  }
+
+  // 最短予約可能日を設定 (翌日)
+  const tomorrow = new Date(searchStartDate);
+  tomorrow.setDate(searchStartDate.getDate() + 1);
+
+  const yyyy = tomorrow.getFullYear();
+  const mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため+1
+  const dd = String(tomorrow.getDate()).padStart(2, '0');
   reservationDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+  // メッセージを表示
+  if (message) {
+    let infoMessageEl = document.getElementById('infoMessage');
+    if (!infoMessageEl) {
+      infoMessageEl = document.createElement('p');
+      infoMessageEl.id = 'infoMessage';
+      infoMessageEl.style.color = 'orange';
+      reservationForm.parentNode.insertBefore(infoMessageEl, reservationForm.nextSibling);
+    }
+    infoMessageEl.textContent = message;
+  }
 
   // 開始時刻と終了時刻の初期値を設定 (例: 09:00 - 10:00)
   startTimeInput.value = '09:00';
@@ -67,68 +93,83 @@ function initializeReservationForm() {
 // バリデーション関数
 // -------------------------------------------
 function validateReservation() {
-    const reservationDate = new Date(reservationDateInput.value);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // 今日の日付の0時0分0秒に設定
+    const initialReservationDate = new Date(reservationDateInput.value);
+    const numberOfWeeks = parseInt(numberOfWeeksInput.value);
 
-    // 当日予約不可
-    if (reservationDate <= today) {
-        openResultModal('入力エラー', '当日のご予約はできません。翌日以降の日付を選択してください。');
+    if (isNaN(numberOfWeeks) || numberOfWeeks < 1) {
+        openResultModal('入力エラー', '連続予約週数は1以上の数値を入力してください。');
         return false;
     }
 
-    const startTime = startTimeInput.value;
-    const endTime = endTimeInput.value;
+    allReservationDates = []; // リセット
 
-    if (!startTime || !endTime) {
-        openResultModal('入力エラー', '開始時刻と終了時刻を選択してください。');
-        return false;
+    for (let i = 0; i < numberOfWeeks; i++) {
+        const reservationDate = new Date(initialReservationDate);
+        reservationDate.setDate(initialReservationDate.getDate() + (i * 7)); // 1週間ずつ加算
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // 今日の日付の0時0分0秒に設定
+
+        // 当日予約不可
+        if (reservationDate <= today) {
+            openResultModal('入力エラー', `予約日 ${reservationDate.toLocaleDateString()} は当日のため予約できません。翌日以降の日付を選択してください。`);
+            return false;
+        }
+
+        const startTime = startTimeInput.value;
+        const endTime = endTimeInput.value;
+
+        if (!startTime || !endTime) {
+            openResultModal('入力エラー', '開始時刻と終了時刻を選択してください。');
+            return false;
+        }
+
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const [endHour, endMinute] = endTime.split(':').map(Number);
+
+        // 開始時刻が毎時0分か30分であるか
+        if (startMinute !== 0 && startMinute !== 30) {
+            openResultModal('入力エラー', '開始時刻は毎時0分か30分を選択してください。');
+            return false;
+        }
+
+        // 終了時刻が毎時0分か30分であるか
+        if (endMinute !== 0 && endMinute !== 30) {
+            openResultModal('入力エラー', '終了時刻は毎時0分か30分を選択してください。');
+            return false;
+        }
+
+        const startDateTime = new Date(reservationDate);
+        startDateTime.setHours(startHour, startMinute, 0, 0);
+        const endDateTime = new Date(reservationDate);
+        endDateTime.setHours(endHour, endMinute, 0, 0);
+
+        // 終了時刻が開始時刻より前または同じ場合
+        if (endDateTime <= startDateTime) {
+            openResultModal('入力エラー', '終了時刻は開始時刻より後に設定してください。');
+            return false;
+        }
+
+        // 利用時間単位が1時間単位であるか
+        const durationMinutes = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60);
+        if (durationMinutes % 60 !== 0) {
+            openResultModal('入力エラー', '利用時間は1時間単位で設定してください。');
+            return false;
+        }
+
+        // 利用可能時間 09:00~21:00
+        const earliestStartTime = new Date(reservationDate);
+        earliestStartTime.setHours(9, 0, 0, 0);
+        const latestEndTime = new Date(reservationDate);
+        latestEndTime.setHours(21, 0, 0, 0);
+
+        if (startDateTime < earliestStartTime || endDateTime > latestEndTime) {
+            openResultModal('入力エラー', `予約日 ${reservationDate.toLocaleDateString()} の利用可能時間は09:00から21:00までです。`);
+            return false;
+        }
+        allReservationDates.push(reservationDate.toISOString().split('T')[0]); // YYYY-MM-DD形式で保存
     }
-
-    const [startHour, startMinute] = startTime.split(':').map(Number);
-    const [endHour, endMinute] = endTime.split(':').map(Number);
-
-    // 開始時刻が毎時0分か30分であるか
-    if (startMinute !== 0 && startMinute !== 30) {
-        openResultModal('入力エラー', '開始時刻は毎時0分か30分を選択してください。');
-        return false;
-    }
-
-    // 終了時刻が毎時0分か30分であるか
-    if (endMinute !== 0 && endMinute !== 30) {
-        openResultModal('入力エラー', '終了時刻は毎時0分か30分を選択してください。');
-        return false;
-    }
-
-    const startDateTime = new Date(reservationDate);
-    startDateTime.setHours(startHour, startMinute, 0, 0);
-    const endDateTime = new Date(reservationDate);
-    endDateTime.setHours(endHour, endMinute, 0, 0);
-
-    // 終了時刻が開始時刻より前または同じ場合
-    if (endDateTime <= startDateTime) {
-        openResultModal('入力エラー', '終了時刻は開始時刻より後に設定してください。');
-        return false;
-    }
-
-    // 利用時間単位が1時間単位であるか
-    const durationMinutes = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60);
-    if (durationMinutes % 60 !== 0) {
-        openResultModal('入力エラー', '利用時間は1時間単位で設定してください。');
-        return false;
-    }
-
-    // 利用可能時間 09:00~21:00
-    const earliestStartTime = new Date(reservationDate);
-    earliestStartTime.setHours(9, 0, 0, 0);
-    const latestEndTime = new Date(reservationDate);
-    latestEndTime.setHours(21, 0, 0, 0);
-
-    if (startDateTime < earliestStartTime || endDateTime > latestEndTime) {
-        openResultModal('入力エラー', '利用可能時間は09:00から21:00までです。');
-        return false;
-    }
-    return true; // 仮に常にtrueを返す
+    return true;
 }
 
 // ------------------------------------------- 
@@ -142,7 +183,6 @@ function openReservationConfirmModal() {
   }
 
   // フォームデータを取得
-  const reservationDate = reservationDateInput.value;
   const startTime = startTimeInput.value;
   const endTime = endTimeInput.value;
   const purpose = "​" + purposeInput.value;
@@ -155,7 +195,7 @@ function openReservationConfirmModal() {
 
   // 予約情報をオブジェクトにまとめる
   currentReservation = {
-    reservationDate,
+    reservationDates: allReservationDates, // 連続予約の日付配列
     startTime,
     endTime,
     purpose,
@@ -169,7 +209,7 @@ function openReservationConfirmModal() {
 
   // モーダルに表示する内容を生成
   let detailsHtml = `
-    <p><strong>利用日:</strong> ${reservationDate}</p>
+    <p><strong>利用日:</strong> ${allReservationDates.join(', ')}</p>
     <p><strong>利用時間:</strong> ${startTime} - ${endTime}</p>
     <p><strong>利用目的:</strong> ${purpose}</p>
     <p><strong>参加人数:</strong> ${participants}名</p>
@@ -200,7 +240,8 @@ async function submitReservation() {
 
   const payload = {
     action: 'submitReservation',
-    ...currentReservation // 現在の予約情報をペイロードに含める
+    ...currentReservation, // 現在の予約情報をペイロードに含める
+    lineUserId: getLineUserId() // LINEユーザーIDを追加
   };
 
   var postparam = {

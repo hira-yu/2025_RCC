@@ -42,15 +42,97 @@ function closeResultModal() {
 }
 
 // -------------------------------------------
+// ヘルパー関数：次の利用可能な水曜日を検索
+// -------------------------------------------
+function findNextAvailableWednesday(currentDate) {
+  let date = new Date(currentDate);
+
+  while (true) {
+    const dayOfWeek = date.getDay(); // 日曜日が0、水曜日が3
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    // 水曜日であるかチェック
+    if (dayOfWeek === 3) {
+      // 年末年始 (12月第4水曜日) とお盆期間 (8月第3水曜日) のチェック
+      let isHoliday = false;
+
+      // 12月第4水曜日
+      if (month === 12) {
+        const fourthWednesday = new Date(year, 11, 1); // 12月1日
+        let count = 0;
+        while (count < 4) {
+          if (fourthWednesday.getDay() === 3) { // 水曜日
+            count++;
+          }
+          if (count < 4) {
+            fourthWednesday.setDate(fourthWednesday.getDate() + 1);
+          }
+        }
+        if (date.toDateString() === fourthWednesday.toDateString()) {
+          isHoliday = true;
+        }
+      }
+
+      // 8月第3水曜日
+      if (month === 8) {
+        const thirdWednesday = new Date(year, 7, 1); // 8月1日
+        let count = 0;
+        while (count < 3) {
+          if (thirdWednesday.getDay() === 3) { // 水曜日
+            count++;
+          }
+          if (count < 3) {
+            thirdWednesday.setDate(thirdWednesday.getDate() + 1);
+          }
+        }
+        if (date.toDateString() === thirdWednesday.toDateString()) {
+          isHoliday = true;
+        }
+      }
+
+      if (!isHoliday) {
+        return date;
+      }
+    }
+    date.setDate(date.getDate() + 1);
+  }
+}
+
+// -------------------------------------------
 // 予約フォームの初期化
 // -------------------------------------------
 function initializeReservationForm() {
-  // 今日の日付をデフォルト値に設定
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
+  const now = new Date();
+  let searchStartDate = new Date(now);
+  let message = '';
+
+  // 17時を過ぎていたら、検索開始日を翌日にする
+  if (now.getHours() >= 17) {
+    searchStartDate.setDate(now.getDate() + 1);
+    message = '※現在時刻が17時を過ぎているため、最短予約日は翌日以降となります。\n';
+  }
+
+  // 最短予約可能日を設定
+  const nextAvailableDate = findNextAvailableWednesday(searchStartDate);
+  const yyyy = nextAvailableDate.getFullYear();
+  const mm = String(nextAvailableDate.getMonth() + 1).padStart(2, '0');
+  const dd = String(nextAvailableDate.getDate()).padStart(2, '0');
   reservationDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+  // メッセージを表示
+  if (message) {
+    // 適切な場所にメッセージを表示する要素を追加するか、既存の要素を利用
+    // 例: reservationForm の直後などに <p id="infoMessage"></p> を追加
+    let infoMessageEl = document.getElementById('infoMessage');
+    if (!infoMessageEl) {
+      infoMessageEl = document.createElement('p');
+      infoMessageEl.id = 'infoMessage';
+      infoMessageEl.style.color = 'orange';
+      reservationForm.parentNode.insertBefore(infoMessageEl, reservationForm.nextSibling);
+    }
+    infoMessageEl.textContent = message;
+  }
 
   // 利用開始時刻の初期値を設定 (例: 09:30)
   startTimeInput.value = '09:30';
