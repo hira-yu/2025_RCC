@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一時預かり予約 - ももポート</title>
+  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../css/common_header.css?v0.2">
+  <link rel="stylesheet" href="./css/style.css?v=0.3">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+      <div class="loading-spinner"></div>
+      <p>予約を送信中...</p>
+    </div>
+
+    <header class="page-header">
+        <img src="../img/momoport_logo.png" alt="ももポートロゴ" class="header-logo">
+        <div class="line-login-container">
+            <a href="#" id="line-login-button" class="line-login-button">
+                <img src="../img/btn_base.png" alt="LINEでログイン">
+            </a>
+        </div>
+    </header>
+
+  <div id="community-hall-reservation-form">
+    <h2>一時預かり予約</h2>
+    <div class="reservation-info">
+        <p><strong>利用可能時間:</strong> 09:30～17:30まで (最終預かりは16:30)</p>
+        <p><strong>料金:</strong> 1時間あたりお子様一人500円</p>
+        <p><strong>利用可能日:</strong> 毎週水曜日のみ (年末年始(12月第4水曜日)・お盆期間(8月第3水曜日)はお休み)</p>
+        <p>※お子様を二人以上預ける場合は、お手数ですがそれぞれ別でお申し込みください。</p>
+    </div>
+    <form id="reservationForm">
+        <div class="form-group">
+            <label for="parentName">保護者の名前:</label>
+            <input type="text" id="parentName" placeholder="お名前" required>
+        </div>
+        <div class="form-group">
+            <label for="contactPhone">連絡先携帯番号:</label>
+            <input type="tel" id="contactPhone" placeholder="電話番号" required>
+        </div>
+        <div class="form-group">
+            <label for="reservationDate">利用日:</label>
+            <input type="date" id="reservationDate" required>
+        </div>
+        <div class="form-group">
+            <label for="usageTime">利用時間:</label>
+            <select id="usageTime" required>
+                <option value="">選択してください</option>
+                <option value="1">1時間</option>
+                <option value="2">2時間</option>
+                <option value="3">3時間</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="startTime">利用開始時刻:</label>
+            <input type="time" id="startTime" required>
+        </div>
+        <div class="form-group">
+            <label for="childName">お子様の名前:</label>
+            <input type="text" id="childName" placeholder="お子様の名前" required>
+        </div>
+        <div class="form-group">
+            <label for="childAge">お子様の年齢:</label>
+            <input type="number" id="childAge" min="0" max="15" required>
+        </div>
+        <div class="form-group">
+            <label for="childGender">お子様の性別:</label>
+            <select id="childGender" required>
+                <option value="">選択してください</option>
+                <option value="male">男</option>
+                <option value="female">女</option>
+                <option value="other">その他</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="notes">その他のお問い合わせ・質問の自由記入欄:</label>
+            <textarea id="notes" placeholder="ご質問やご要望など"></textarea>
+        </div>
+        <button type="button" id="confirmReservationBtn" class="btn btn-primary">予約内容を確認</button>
+    </form>
+  </div>
+
+  <div id="order-confirm-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeOrderModal()">&times;</span>
+        
+        <div class="order-summary-content">
+            <h2>ご予約内容の確認</h2>
+            <div id="reservation-details">
+                <!-- 予約詳細がここに動的に挿入されます -->
+                <p class="empty-cart-message">予約情報がありません。</p>
+            </div>
+            <p><strong>利用料金: <span id="total-price-detail">0</span>円</strong></p>
+
+            <button id="submit-reservation" class="submit-button btn btn-primary">予約確定</button>
+            <p id="message" class="error"></p>
+        </div>
+    </div>
+</div>
+
+<div id="result-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeResultModal()">&times;</span>
+        <h2 id="result-modal-title"></h2>
+        <p id="result-modal-message"></p>
+        <button class="btn btn-primary" onclick="closeResultModal()">閉じる</button>
+    </div>
+</div>
+
+    <script src="./js/script.js"></script>
+    <script src="./js/line_login.js"></script>
+</body>
+</html>
