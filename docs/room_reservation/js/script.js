@@ -53,6 +53,10 @@ function initializeReservationForm() {
   const dd = String(today.getDate()).padStart(2, '0');
   reservationDateInput.value = `${yyyy}-${mm}-${dd}`;
 
+  // 開始時刻と終了時刻の初期値を設定 (例: 09:00 - 10:00)
+  startTimeInput.value = '09:00';
+  endTimeInput.value = '10:00';
+
   // 予約確認ボタンのイベントリスナー
   confirmReservationBtn.addEventListener('click', openReservationConfirmModal);
   // 予約確定ボタンのイベントリスナー

@@ -52,6 +52,9 @@ function initializeReservationForm() {
   const dd = String(today.getDate()).padStart(2, '0');
   reservationDateInput.value = `${yyyy}-${mm}-${dd}`;
 
+  // 利用開始時刻の初期値を設定 (例: 09:30)
+  startTimeInput.value = '09:30';
+
   // 予約確認ボタンのイベントリスナー
   confirmReservationBtn.addEventListener('click', openReservationConfirmModal);
   // 予約確定ボタンのイベントリスナー
@@ -62,7 +65,20 @@ function initializeReservationForm() {
 // バリデーション関数
 // -------------------------------------------
 function validateReservation() {
+    // 今日の日付を取得 (時刻情報は無視)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 予約日を取得 (時刻情報は無視)
     const reservationDate = new Date(reservationDateInput.value);
+    reservationDate.setHours(0, 0, 0, 0);
+
+    // 予約日が今日以前ではないことを確認
+    if (reservationDate <= today) {
+        openResultModal('入力エラー', '当日の予約は受け付けておりません。翌日以降の日付を選択してください。');
+        return false;
+    }
+
     const dayOfWeek = reservationDate.getDay(); // 日曜日が0、土曜日が6
     const month = reservationDate.getMonth() + 1;
     const day = reservationDate.getDate();
