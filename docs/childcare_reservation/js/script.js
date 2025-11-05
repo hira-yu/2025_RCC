@@ -120,6 +120,11 @@ function validateReservation() {
     }
 
     const [startHour, startMinute] = startTime.split(':').map(Number);
+    // 利用開始時刻が15分単位であるかチェック
+    if (startMinute % 15 !== 0) {
+        openResultModal('入力エラー', '利用開始時刻は15分単位で入力してください。');
+        return false;
+    }
     const startDateTime = new Date(reservationDate);
     startDateTime.setHours(startHour, startMinute, 0, 0);
 

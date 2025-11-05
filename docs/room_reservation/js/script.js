@@ -59,12 +59,80 @@ function initializeReservationForm() {
   submitReservationBtn.addEventListener('click', submitReservation);
 }
 
+// -------------------------------------------
+// バリデーション関数
+// -------------------------------------------
+function validateReservation() {
+    const reservationDate = new Date(reservationDateInput.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 今日の日付の0時0分0秒に設定
+
+    // 当日予約不可
+    if (reservationDate <= today) {
+        openResultModal('入力エラー', '当日のご予約はできません。翌日以降の日付を選択してください。');
+        return false;
+    }
+
+    const startTime = startTimeInput.value;
+    const endTime = endTimeInput.value;
+
+    if (!startTime || !endTime) {
+        openResultModal('入力エラー', '開始時刻と終了時刻を選択してください。');
+        return false;
+    }
+
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+
+    // 開始時刻が毎時0分か30分であるか
+    if (startMinute !== 0 && startMinute !== 30) {
+        openResultModal('入力エラー', '開始時刻は毎時0分か30分を選択してください。');
+        return false;
+    }
+
+    // 終了時刻が毎時0分か30分であるか
+    if (endMinute !== 0 && endMinute !== 30) {
+        openResultModal('入力エラー', '終了時刻は毎時0分か30分を選択してください。');
+        return false;
+    }
+
+    const startDateTime = new Date(reservationDate);
+    startDateTime.setHours(startHour, startMinute, 0, 0);
+    const endDateTime = new Date(reservationDate);
+    endDateTime.setHours(endHour, endMinute, 0, 0);
+
+    // 終了時刻が開始時刻より前または同じ場合
+    if (endDateTime <= startDateTime) {
+        openResultModal('入力エラー', '終了時刻は開始時刻より後に設定してください。');
+        return false;
+    }
+
+    // 利用時間単位が1時間単位であるか
+    const durationMinutes = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60);
+    if (durationMinutes % 60 !== 0) {
+        openResultModal('入力エラー', '利用時間は1時間単位で設定してください。');
+        return false;
+    }
+
+    // 利用可能時間 09:00~21:00
+    const earliestStartTime = new Date(reservationDate);
+    earliestStartTime.setHours(9, 0, 0, 0);
+    const latestEndTime = new Date(reservationDate);
+    latestEndTime.setHours(21, 0, 0, 0);
+
+    if (startDateTime < earliestStartTime || endDateTime > latestEndTime) {
+        openResultModal('入力エラー', '利用可能時間は09:00から21:00までです。');
+        return false;
+    }
+    return true; // 仮に常にtrueを返す
+}
+
 // ------------------------------------------- 
 // 予約確認モーダルの制御
 // ------------------------------------------- 
 function openReservationConfirmModal() {
   // フォームのバリデーション
-  if (!reservationForm.checkValidity()) {
+  if (!reservationForm.checkValidity() || !validateReservation()) {
     reservationForm.reportValidity();
     return;
   }
