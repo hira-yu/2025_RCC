@@ -4,7 +4,7 @@ document.getElementById('line-login-button').addEventListener('click', function(
     const redirectToPath = '/2025_RCC/room_reservation/index.html'; // このページのパス
 
     // スターサーバーのPHPスクリプトを呼び出してLINEログインURLを取得
-    fetch(`https://hirayu6121.stars.ne.jp/php/generate_line_login_url.php?path=${encodeURIComponent(redirectToPath)}`)
+    fetch(`https://momoport.hirayu.jp/php/generate_line_login_url.php?path=${encodeURIComponent(redirectToPath)}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
