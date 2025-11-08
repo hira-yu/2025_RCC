@@ -59,6 +59,10 @@
             <label for="notes">特記事項:</label>
             <textarea id="notes" placeholder="アレルギーなど特記事項があれば..."></textarea>
 
+            <div id="dynamic-questions-container">
+                <!-- 動的に生成される質問項目がここに挿入されます -->
+            </div>
+
             <button id="submit-order" class="submit-button btn btn-primary" onclick="submitOrder()">注文確定</button>
             <p id="message" class="error"></p>
         </div>

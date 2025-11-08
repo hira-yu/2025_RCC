@@ -2,6 +2,7 @@
 const PHP_ORDER_API_URL = 'https://momoport.hirayu.jp/php/submit_order.php'; // 新しいPHPエンドポイント
 const PHP_PRODUCTS_API_URL = 'https://momoport.hirayu.jp/php/get_products.php'; // 新しい商品取得PHPエンドポイント
 const PHP_ORDER_HISTORY_API_URL = 'https://momoport.hirayu.jp/php/get_order_history.php'; // 新しい注文履歴取得PHPエンドポイント
+const PHP_ADMIN_FORMS_API_URL = 'https://momoport.hirayu.jp/php/admin_forms.php'; // 管理フォームAPIエンドポイントを追加
 const noImg_url = 'https://lh3.googleusercontent.com/d/1XwsZXQfdlJSt_ztCATEuRcDzWkbz_lk5';
 
 // 既存の定数
@@ -12,11 +13,13 @@ const messageEl = document.getElementById('message');
 const cart = {}; // { product_id: { item_object, quantity } }
 let productsData = []; // ★商品データを全体で保持するための新しい変数
 let currentProduct = null; // ★現在モーダルに表示中の商品
+let dynamicQuestions = []; // 動的に生成される質問項目を保持する変数
 
 // 注文確認モーダル関連の要素
 const orderConfirmModal = document.getElementById('order-confirm-modal');
 const cartItemsDetailEl = document.getElementById('cart-items-detail');
 const totalPriceDetailEl = document.getElementById('total-price-detail');
+const dynamicQuestionsContainer = document.getElementById('dynamic-questions-container'); // 追加
 
 // ミニカートバー関連の要素
 const itemCountEl = document.getElementById('item-count');
@@ -57,6 +60,9 @@ async function loadProducts() {
     const result = await response.json(); // result.products を取得
     if (result.status === 'success') {
         displayProducts(result.products);
+        // 動的な質問項目を読み込み、表示
+        dynamicQuestions = await loadDynamicQuestions('product_order');
+        renderDynamicQuestions(dynamicQuestions);
     } else {
         handleError(result.message || '商品データの取得に失敗しました。');
     }
@@ -462,6 +468,52 @@ async function submitOrder() {
   const lineUserId = getLineUserId(); // LINEユーザーIDを取得
   const customerEmail = document.getElementById('customerEmail').value.trim(); // 追加
   const customerPhone = document.getElementById('customerPhone').value.trim(); // 追加
+  
+  // 動的に生成された質問項目のデータを収集
+  const dynamicQuestionsData = {};
+  let dynamicQuestionsValid = true;
+  dynamicQuestions.forEach(question => {
+      const inputElement = document.getElementById(question.question_key);
+      if (!inputElement) {
+          console.warn(`動的質問項目 ${question.question_key} の要素が見つかりません。`);
+          return;
+      }
+
+      let value;
+      if (question.input_type === 'checkbox') {
+          // チェックボックスは複数選択可能
+          const checkboxes = document.querySelectorAll(`input[name="${question.question_key}"]:checked`);
+          value = Array.from(checkboxes).map(cb => cb.value);
+          if (question.is_required && value.length === 0) {
+              dynamicQuestionsValid = false;
+              openResultModal('エラー', `${question.question_text} は必須項目です。`);
+              return;
+          }
+      } else if (question.input_type === 'radio') {
+          // ラジオボタンは単一選択
+          const radio = document.querySelector(`input[name="${question.question_key}"]:checked`);
+          value = radio ? radio.value : '';
+          if (question.is_required && !value) {
+              dynamicQuestionsValid = false;
+              openResultModal('エラー', `${question.question_text} は必須項目です。`);
+              return;
+          }
+      } else {
+          value = inputElement.value.trim();
+          if (question.is_required && !value) {
+              dynamicQuestionsValid = false;
+              openResultModal('エラー', `${question.question_text} は必須項目です。`);
+              return;
+          }
+      }
+      dynamicQuestionsData[question.question_key] = value;
+  });
+
+  if (!dynamicQuestionsValid) {
+      document.getElementById('submit-order').disabled = false;
+      return;
+  }
+
   const payload = {
     action: 'submitOrder',
     lineUserId: lineUserId, // LINEユーザーIDを追加
@@ -469,7 +521,8 @@ async function submitOrder() {
     customerEmail: customerEmail, // 追加
     customerPhone: customerPhone, // 追加
     notes: "​" + notes,
-    items: itemsToOrder
+    items: itemsToOrder,
+    dynamic_questions_data: dynamicQuestionsData // 動的に生成された質問項目データ
   };
 
   var postparam = {
@@ -542,6 +595,143 @@ function handleError(error) {
   
   // モーダルが開いている場合は閉じる（モーダル内エラーの場合を想定）
   document.getElementById('modal-message').textContent = '';
+}
+
+// -------------------------------------------
+// 動的な質問項目を読み込む
+// -------------------------------------------
+async function loadDynamicQuestions(formName) {
+    try {
+        const url = new URL(PHP_ADMIN_FORMS_API_URL);
+        url.searchParams.append('form_name', formName);
+
+        const response = await fetch(url.toString());
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            return data.questions;
+        } else {
+            console.error('動的な質問項目の読み込みに失敗しました:', data.message);
+            return [];
+        }
+    } catch (error) {
+        console.error('動的な質問項目の読み込み中にエラーが発生しました:', error);
+        return [];
+    }
+}
+
+// -------------------------------------------
+// 動的な質問項目をレンダリングする
+// -------------------------------------------
+function renderDynamicQuestions(questions) {
+    dynamicQuestionsContainer.innerHTML = ''; // 既存の質問をクリア
+
+    questions.sort((a, b) => a.order_num - b.order_num); // order_numでソート
+
+    questions.forEach(question => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'dynamic-question-item';
+
+        const label = document.createElement('label');
+        label.textContent = question.question_text;
+        if (question.is_required) {
+            const requiredSpan = document.createElement('span');
+            requiredSpan.className = 'required-mark';
+            requiredSpan.textContent = ' *';
+            label.appendChild(requiredSpan);
+        }
+        questionDiv.appendChild(label);
+
+        let inputElement;
+        switch (question.input_type) {
+            case 'text':
+            case 'number':
+            case 'email':
+            case 'tel':
+                inputElement = document.createElement('input');
+                inputElement.type = question.input_type;
+                inputElement.id = question.question_key;
+                inputElement.name = question.question_key;
+                inputElement.required = question.is_required;
+                break;
+            case 'textarea':
+                inputElement = document.createElement('textarea');
+                inputElement.id = question.question_key;
+                inputElement.name = question.question_key;
+                inputElement.required = question.is_required;
+                break;
+            case 'select':
+                inputElement = document.createElement('select');
+                inputElement.id = question.question_key;
+                inputElement.name = question.question_key;
+                inputElement.required = question.is_required;
+                if (question.options) {
+                    JSON.parse(question.options).forEach(optionText => {
+                        const option = document.createElement('option');
+                        option.value = optionText;
+                        option.textContent = optionText;
+                        inputElement.appendChild(option);
+                    });
+                }
+                break;
+            case 'checkbox':
+                // チェックボックスは複数選択可能なので、グループとして扱う
+                inputElement = document.createElement('div');
+                inputElement.className = 'checkbox-group';
+                if (question.options) {
+                    JSON.parse(question.options).forEach((optionText, index) => {
+                        const checkboxId = `${question.question_key}-${index}`;
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = checkboxId;
+                        checkbox.name = question.question_key; // 同じnameでグループ化
+                        checkbox.value = optionText;
+                        checkbox.required = question.is_required; // HTML5のrequiredは単一チェックボックスにしか効かないため、JSでバリデーションが必要になる場合がある
+
+                        const checkboxLabel = document.createElement('label');
+                        checkboxLabel.htmlFor = checkboxId;
+                        checkboxLabel.textContent = optionText;
+
+                        inputElement.appendChild(checkbox);
+                        inputElement.appendChild(checkboxLabel);
+                        inputElement.appendChild(document.createElement('br'));
+                    });
+                }
+                break;
+            case 'radio':
+                // ラジオボタンは単一選択
+                inputElement = document.createElement('div');
+                inputElement.className = 'radio-group';
+                if (question.options) {
+                    JSON.parse(question.options).forEach((optionText, index) => {
+                        const radioId = `${question.question_key}-${index}`;
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.id = radioId;
+                        radio.name = question.question_key; // 同じnameでグループ化
+                        radio.value = optionText;
+                        radio.required = question.is_required;
+
+                        const radioLabel = document.createElement('label');
+                        radioLabel.htmlFor = radioId;
+                        radioLabel.textContent = optionText;
+
+                        inputElement.appendChild(radio);
+                        inputElement.appendChild(radioLabel);
+                        inputElement.appendChild(document.createElement('br'));
+                    });
+                }
+                break;
+            default:
+                console.warn('不明な入力タイプ:', question.input_type);
+                return;
+        }
+        questionDiv.appendChild(inputElement);
+        dynamicQuestionsContainer.appendChild(questionDiv);
+    });
 }
 
 // -------------------------------------------
