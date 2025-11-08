@@ -1,6 +1,6 @@
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
 
-const API_ENDPOINT = '../../php/admin_forms.php'; // admin_forms.php へのパス
+const API_ENDPOINT = 'https://momoport.hirayu.jp/php/admin_forms.php'; // admin_forms.php へのパス
 
 // -------------------------------------------
 // 動的な質問を読み込み、フォームに生成する

@@ -1,7 +1,7 @@
 // const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby4pwwAzbWl5yavwF1tA5XfGgMuSNJBTKy_LILY-Z01wcnEIHQ7wYSFZy81SvpfyoEyUA/exec';
-const PHP_ORDER_API_URL = '../php/submit_order.php'; // 新しいPHPエンドポイント
-const PHP_PRODUCTS_API_URL = '../php/get_products.php'; // 新しい商品取得PHPエンドポイント
-const PHP_ORDER_HISTORY_API_URL = '../php/get_order_history.php'; // 新しい注文履歴取得PHPエンドポイント
+const PHP_ORDER_API_URL = 'https://momoport.hirayu.jp/php/submit_order.php'; // 新しいPHPエンドポイント
+const PHP_PRODUCTS_API_URL = 'https://momoport.hirayu.jp/php/get_products.php'; // 新しい商品取得PHPエンドポイント
+const PHP_ORDER_HISTORY_API_URL = 'https://momoport.hirayu.jp/php/get_order_history.php'; // 新しい注文履歴取得PHPエンドポイント
 const noImg_url = 'https://lh3.googleusercontent.com/d/1XwsZXQfdlJSt_ztCATEuRcDzWkbz_lk5';
 
 // 既存の定数
