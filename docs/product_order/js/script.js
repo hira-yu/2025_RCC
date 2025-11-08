@@ -636,7 +636,7 @@ function renderDynamicQuestions(questions) {
         questionDiv.className = 'dynamic-question-item';
 
         const label = document.createElement('label');
-        label.textContent = question.question_text;
+        label.textContent = question.question_text + ":";
         if (question.is_required) {
             const requiredSpan = document.createElement('span');
             requiredSpan.className = 'required-mark';

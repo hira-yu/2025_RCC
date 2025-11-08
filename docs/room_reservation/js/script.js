@@ -70,7 +70,7 @@ async function loadDynamicQuestions() {
         questionGroup.className = 'form-group';
 
         const label = document.createElement('label');
-        label.textContent = question.question_text;
+        label.textContent = question.question_text + ":";
         if (question.is_required) {
           label.innerHTML += ' <span class="required">*</span>';
         }
