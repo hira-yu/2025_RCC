@@ -2,7 +2,7 @@
 const PHP_ORDER_API_URL = 'https://momoport.hirayu.jp/php/submit_order.php'; // 新しいPHPエンドポイント
 const PHP_PRODUCTS_API_URL = 'https://momoport.hirayu.jp/php/get_products.php'; // 新しい商品取得PHPエンドポイント
 const PHP_ORDER_HISTORY_API_URL = 'https://momoport.hirayu.jp/php/get_order_history.php'; // 新しい注文履歴取得PHPエンドポイント
-const PHP_ADMIN_FORMS_API_URL = 'https://momoport.hirayu.jp/php/admin_forms.php'; // 管理フォームAPIエンドポイントを追加
+const PHP_ADMIN_FORMS_API_URL = 'https://momoport.hirayu.jp/php/get_form_questions.php'; // 管理フォームAPIエンドポイントを追加
 const noImg_url = 'https://lh3.googleusercontent.com/d/1XwsZXQfdlJSt_ztCATEuRcDzWkbz_lk5';
 
 // 既存の定数
