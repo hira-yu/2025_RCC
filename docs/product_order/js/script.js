@@ -1,4 +1,7 @@
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby4pwwAzbWl5yavwF1tA5XfGgMuSNJBTKy_LILY-Z01wcnEIHQ7wYSFZy81SvpfyoEyUA/exec';
+// const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby4pwwAzbWl5yavwF1tA5XfGgMuSNJBTKy_LILY-Z01wcnEIHQ7wYSFZy81SvpfyoEyUA/exec';
+const PHP_ORDER_API_URL = '../php/submit_order.php'; // 新しいPHPエンドポイント
+const PHP_PRODUCTS_API_URL = '../php/get_products.php'; // 新しい商品取得PHPエンドポイント
+const PHP_ORDER_HISTORY_API_URL = '../php/get_order_history.php'; // 新しい注文履歴取得PHPエンドポイント
 const noImg_url = 'https://lh3.googleusercontent.com/d/1XwsZXQfdlJSt_ztCATEuRcDzWkbz_lk5';
 
 // 既存の定数
@@ -46,12 +49,17 @@ function closeResultModal() {
 async function loadProducts() {
   messageEl.textContent = '';
   try {
-    const response = await fetch(`${GAS_WEB_APP_URL}?action=getProductsData`);
+    // URLをPHPエンドポイントに変更
+    const response = await fetch(PHP_PRODUCTS_API_URL);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const products = await response.json();
-    displayProducts(products);
+    const result = await response.json(); // result.products を取得
+    if (result.status === 'success') {
+        displayProducts(result.products);
+    } else {
+        handleError(result.message || '商品データの取得に失敗しました。');
+    }
   } catch (error) {
     handleError('商品データの取得に失敗しました: ' + error.message);
   }
@@ -448,22 +456,28 @@ async function submitOrder() {
   showLoadingOverlay(); // ローディングオーバーレイを表示
 
   const lineUserId = getLineUserId(); // LINEユーザーIDを取得
+  const customerEmail = document.getElementById('customerEmail').value.trim(); // 追加
+  const customerPhone = document.getElementById('customerPhone').value.trim(); // 追加
   const payload = {
     action: 'submitOrder',
     lineUserId: lineUserId, // LINEユーザーIDを追加
     customerName: "​" + customerName,
+    customerEmail: customerEmail, // 追加
+    customerPhone: customerPhone, // 追加
     notes: "​" + notes,
     items: itemsToOrder
   };
 
   var postparam = {
     "method"     : "POST",
-    "Content-Type" : "application/x-www-form-urlencoded",
+    "headers"    : {
+      "Content-Type" : "application/json" // Content-Typeをjsonに変更
+    },
     "body" : JSON.stringify(payload)
   };
 
   try {
-    const response = await fetch(GAS_WEB_APP_URL, postparam);
+    const response = await fetch(PHP_ORDER_API_URL, postparam); // URLをPHPエンドポイントに変更
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -604,7 +618,8 @@ function closeOrderHistoryModal() {
 async function loadUserOrders(lineUserId) {
     orderHistoryList.innerHTML = '<p>注文履歴を読み込み中...</p>';
     try {
-        const response = await fetch(`${GAS_WEB_APP_URL}?action=getUserOrders&lineUserId=${lineUserId}`);
+        // URLをPHPエンドポイントに変更
+        const response = await fetch(`${PHP_ORDER_HISTORY_API_URL}?lineUserId=${lineUserId}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
