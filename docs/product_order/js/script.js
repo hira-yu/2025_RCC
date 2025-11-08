@@ -74,7 +74,7 @@ function displayProducts(products) {
   }
   
   if (products.length === 0) {
-    productListEl.innerHTML = '<p class="no-products-message">現在注文できる商品はありません。</p>';
+    productListEl.innerHTML = '<div id="loading" style="text-align: center; font-size: 32px;">現在、注文できる商品はありません。</div>';
     return;
   }
   
