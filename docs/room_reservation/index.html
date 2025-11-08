@@ -27,56 +27,10 @@
   <div id="community-hall-reservation-form">
     <h2>ももポート利用予約</h2>
     <form id="reservationForm">
-        <div class="form-group">
-            <label for="reservationDate">利用日:</label>
-            <input type="date" id="reservationDate" required>
+        <div id="dynamic-questions-container">
+            <!-- 動的に生成される質問項目がここに挿入されます -->
         </div>
-        <div class="form-group">
-            <label for="numberOfWeeks">連続予約週数:</label>
-            <input type="number" id="numberOfWeeks" min="1" value="1" required>
-        </div>
-        <div class="form-group">
-            <label for="startTime">開始時刻:</label>
-            <input type="time" id="startTime" required step="1800">
-        </div>
-        <div class="form-group">
-            <label for="endTime">終了時刻:</label>
-            <input type="time" id="endTime" required step="1800">
-        </div>
-        <div class="form-group">
-            <label for="purpose">利用目的:</label>
-            <input type="text" id="purpose" placeholder="例: 会議、イベント" required>
-        </div>
-        <div class="form-group">
-            <label for="participants">参加人数:</label>
-            <input type="number" id="participants" min="1" value="1" required>
-        </div>
-        <div class="form-group">
-            <label for="contactName">代表者名:</label>
-            <input type="text" id="contactName" placeholder="お名前" required>
-        </div>
-        <div class="form-group">
-            <label for="contactEmail">メールアドレス:</label>
-            <input type="email" id="contactEmail" placeholder="メールアドレス" required>
-        </div>
-        <div class="form-group">
-            <label for="contactPhone">電話番号:</label>
-            <input type="tel" id="contactPhone" placeholder="電話番号">
-        </div>
-        <div class="form-group">
-            <label for="equipment">必要な備品 (複数選択可):</label>
-            <select id="equipment" multiple>
-                <option value="projector">プロジェクター</option>
-                <option value="whiteboard">ホワイトボード</option>
-                <option value="microphone">マイク</option>
-                <option value="tables">追加テーブル</option>
-                <option value="chairs">追加椅子</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="notes">特記事項:</label>
-            <textarea id="notes" placeholder="その他ご要望など"></textarea>
-        </div>
+
         <button type="button" id="confirmReservationBtn" class="btn btn-primary">予約内容を確認</button>
     </form>
   </div>

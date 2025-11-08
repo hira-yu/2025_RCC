@@ -437,37 +437,7 @@ function closeOrderModal() {
 async function submitOrder() {
   document.getElementById('submit-order').disabled = true;
   
-  const customerName = document.getElementById('customerName').value.trim();
-  const notes = document.getElementById('notes').value;
-  
-  if (!customerName) {
-    // messageEl.textContent = 'エラー: お名前を入力してください。'; // 削除
-    document.getElementById('submit-order').disabled = false;
-    // closeOrderModal(); // カートモーダルを閉じる - 削除
-    openResultModal('エラー', 'エラー: お名前を入力してください。');
-    return;
-  }
-  
-  const itemsToOrder = Object.values(cart).filter(item => item.quantity > 0).map(item => ({
-    id: item.id,
-    name: item.name,
-    price: item.price, // 基本価格
-    quantity: item.quantity,
-    selectedOptions: item.selectedOptions || [] // 選択されたオプション情報
-  }));
-  
-  if (itemsToOrder.length === 0) {
-    // messageEl.textContent = 'エラー: 注文する商品がありません。'; // 削除
-    document.getElementById('submit-order').disabled = false;
-    // closeOrderModal(); // カートモーダルを閉じる - 削除
-    openResultModal('エラー', 'エラー: 注文する商品がありません。');
-    return;
-  }
-  showLoadingOverlay(); // ローディングオーバーレイを表示
-
   const lineUserId = getLineUserId(); // LINEユーザーIDを取得
-  const customerEmail = document.getElementById('customerEmail').value.trim(); // 追加
-  const customerPhone = document.getElementById('customerPhone').value.trim(); // 追加
   
   // 動的に生成された質問項目のデータを収集
   const dynamicQuestionsData = {};
@@ -504,26 +474,23 @@ async function submitOrder() {
               dynamicQuestionsValid = false;
               openResultModal('エラー', `${question.question_text} は必須項目です。`);
               return;
+              }
           }
+          dynamicQuestionsData[question.question_key] = value;
+      });
+  
+      if (!dynamicQuestionsValid) {
+          document.getElementById('submit-order').disabled = false;
+          return;
       }
-      dynamicQuestionsData[question.question_key] = value;
-  });
+  
+      const payload = {
+        action: 'submitOrder',
+        lineUserId: lineUserId, // LINEユーザーIDを追加
+        items: itemsToOrder,
+        dynamic_questions_data: dynamicQuestionsData // 動的に生成された質問項目データ
+      };
 
-  if (!dynamicQuestionsValid) {
-      document.getElementById('submit-order').disabled = false;
-      return;
-  }
-
-  const payload = {
-    action: 'submitOrder',
-    lineUserId: lineUserId, // LINEユーザーIDを追加
-    customerName: "​" + customerName,
-    customerEmail: customerEmail, // 追加
-    customerPhone: customerPhone, // 追加
-    notes: "​" + notes,
-    items: itemsToOrder,
-    dynamic_questions_data: dynamicQuestionsData // 動的に生成された質問項目データ
-  };
 
   var postparam = {
     "method"     : "POST",
