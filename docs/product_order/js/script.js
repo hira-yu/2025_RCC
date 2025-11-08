@@ -66,11 +66,15 @@ async function loadProducts() {
 }
 
 function displayProducts(products) {
-  console.log("GASから受信した商品データ:", products);
   document.getElementById('loading').style.display = 'none';
 
-  if (products.error || products.length === 0) {
-    handleError(products.error || '商品データが見つかりませんでした。Spread Sheetを確認してください。');
+  if (products.error) {
+    handleError(products.error || '商品データが見つかりませんでした。');
+    return;
+  }
+  
+  if (products.length === 0) {
+    productListEl.innerHTML = '<p class="no-products-message">現在注文できる商品はありません。</p>';
     return;
   }
   
