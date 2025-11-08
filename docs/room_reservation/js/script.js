@@ -141,6 +141,11 @@ async function loadDynamicQuestions() {
         }
         questionGroup.appendChild(inputElement);
         dynamicQuestionsContainer.appendChild(questionGroup);
+
+        // equipment の select 要素が生成された後に MultiSelectDropdown を初期化
+        if (question.question_key === 'equipment' && question.input_type === 'select') {
+            new MultiSelectDropdown(inputElement);
+        }
       });
     } else {
       console.error('Failed to load dynamic questions:', data.message);
