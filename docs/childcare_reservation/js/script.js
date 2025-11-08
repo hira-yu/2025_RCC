@@ -209,7 +209,7 @@ function findNextAvailableWednesday(currentDate) {
 // -------------------------------------------
 // 予約フォームの初期化
 // -------------------------------------------
-function initializeReservationForm() {
+async function initializeReservationForm() {
   const now = new Date();
   let searchStartDate = new Date(now);
   let message = '';
@@ -219,13 +219,6 @@ function initializeReservationForm() {
     searchStartDate.setDate(now.getDate() + 1);
     message = '※現在時刻が17時を過ぎているため、最短予約日は翌日以降となります。\n';
   }
-
-  // 最短予約可能日を設定
-  const nextAvailableDate = findNextAvailableWednesday(searchStartDate);
-  const yyyy = nextAvailableDate.getFullYear();
-  const mm = String(nextAvailableDate.getMonth() + 1).padStart(2, '0');
-  const dd = String(nextAvailableDate.getDate()).padStart(2, '0');
-  reservationDateInput.value = `${yyyy}-${mm}-${dd}`;
 
   // メッセージを表示
   if (message) {
@@ -241,8 +234,8 @@ function initializeReservationForm() {
     infoMessageEl.textContent = message;
   }
 
-  // 利用開始時刻の初期値を設定 (例: 09:30)
-  startTimeInput.value = '09:30';
+  // 動的な質問を読み込む
+  await loadDynamicQuestions();
 
   // 予約確認ボタンのイベントリスナー
   confirmReservationBtn.addEventListener('click', openReservationConfirmModal);

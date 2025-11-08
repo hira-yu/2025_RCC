@@ -1,0 +1,179 @@
+:root {
+    --spacing-smaller: 3px;
+    --spacing-small: 5px;
+    --spacing-medium: 7px;
+    --spacing-large: 12px;
+    --font-size: 18px;
+    --font-size-large: 20px;
+    --font-size-larger: 22px;
+    --line-height: 16px;
+    --line-height-larger: 20px;
+    --primary-color: #007bff;
+    --text-color-dark: #333;
+    --text-color: #555;
+    --text-color-light: #666;
+    --border-color: #bebebe;
+    --border-color-light: #f1f3f5;
+    --input-placeholder: #949494;
+}
+
+.multi-select-dropdown {
+    position: relative;
+    display: block;
+    font-size: var(--font-size);
+    font-family: sans-serif;
+    cursor: pointer;
+}
+
+.multi-select-dropdown * {
+    box-sizing: border-box;
+}
+
+.multi-select-dropdown .selected-display {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 34px;
+    padding: var(--spacing-small) var(--spacing-large);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: #fff;
+    gap: var(--spacing-small);
+}
+
+.multi-select-dropdown .selected-display .item {
+    display: flex;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+}
+
+.multi-select-dropdown .selected-display .item .remove {
+    margin-left: var(--spacing-small);
+    font-size: var(--font-size);
+    cursor: pointer;
+}
+
+.multi-select-dropdown .dropdown-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    padding: var(--spacing-small);
+    margin-top: var(--spacing-small);
+}
+
+.multi-select-dropdown .dropdown-container .search-input {
+    width: 100%;
+    padding: var(--spacing-small);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: var(--font-size);
+    margin-bottom: var(--spacing-small);
+}
+
+.multi-select-dropdown .dropdown-container .search-input::placeholder {
+    color: var(--input-placeholder);
+}
+
+.multi-select-dropdown .dropdown-container .options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.multi-select-dropdown .dropdown-container .options .option {
+    padding: var(--spacing-small);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+}
+
+.multi-select-dropdown .dropdown-container .options .option:hover {
+    background-color: var(--border-color-light);
+}
+
+.multi-select-dropdown .dropdown-container .options .option.selected {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.multi-select-dropdown .dropdown-container .options .option.selected .checkbox {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.multi-select-dropdown .dropdown-container .options .option.selected .checkbox::after {
+    border-color: var(--primary-color);
+}
+
+.multi-select-dropdown .dropdown-container .options .option .checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.multi-select-dropdown .dropdown-container .options .option .checkbox::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 8px;
+    border: solid var(--primary-color);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    display: none;
+}
+
+.multi-select-dropdown .dropdown-container .options .option.selected .checkbox::after {
+    display: block;
+}
+
+.multi-select-dropdown .dropdown-container .options .option.hidden {
+    display: none;
+}
+
+.multi-select-dropdown .dropdown-container .options .option.no-results {
+    text-align: center;
+    color: var(--text-color-light);
+}
+
+.multi-select-dropdown .dropdown-container .select-all,
+.multi-select-dropdown .dropdown-container .limit-reached {
+    padding: var(--spacing-small);
+    text-align: center;
+    color: var(--text-color-light);
+    border-top: 1px solid var(--border-color-light);
+    margin-top: var(--spacing-small);
+}
+
+.multi-select-dropdown .dropdown-container .select-all {
+    cursor: pointer;
+    color: var(--primary-color);
+}
+
+.multi-select-dropdown .dropdown-container .select-all:hover {
+    background-color: var(--border-color-light);
+}
+
+.multi-select-dropdown.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.multi-select-dropdown.disabled .selected-display {
+    pointer-events: none;
+}
