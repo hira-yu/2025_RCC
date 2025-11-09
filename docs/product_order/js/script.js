@@ -699,6 +699,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (viewCartButton) {
         viewCartButton.addEventListener('click', openOrderModal);
     }
+
+    // order-confirm-modal の閉じるボタンにイベントリスナーを追加
+    const orderConfirmModalCloseButton = orderConfirmModal.querySelector('.close');
+    if (orderConfirmModalCloseButton) {
+        orderConfirmModalCloseButton.addEventListener('click', closeOrderModal);
+    }
 });
 
 // モーダル外クリックで閉じる処理に注文履歴モーダルを追加
