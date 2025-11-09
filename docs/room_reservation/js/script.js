@@ -264,6 +264,27 @@ function handleError(error) {
 // ------------------------------------------- 
 // その他のイベントリスナー
 // ------------------------------------------- 
+document.addEventListener('DOMContentLoaded', () => {
+  // reservationConfirmModal の閉じるボタンにイベントリスナーを追加
+  const reservationConfirmModalCloseButton = reservationConfirmModal.querySelector('.close');
+  if (reservationConfirmModalCloseButton) {
+      reservationConfirmModalCloseButton.addEventListener('click', closeReservationConfirmModal);
+  }
+
+  // resultModal の閉じるボタンにイベントリスナーを追加
+  const resultModal = document.getElementById('result-modal');
+  const resultModalCloseButton = resultModal.querySelector('.close');
+  if (resultModalCloseButton) {
+      resultModalCloseButton.addEventListener('click', closeResultModal);
+  }
+
+  // resultModal 内の「閉じる」ボタンにイベントリスナーを追加
+  const resultModalPrimaryButton = resultModal.querySelector('.btn-primary');
+  if (resultModalPrimaryButton) {
+      resultModalPrimaryButton.addEventListener('click', closeResultModal);
+  }
+});
+
 // モーダル外クリックで閉じる処理
 window.onclick = function(event) {
   const reservationConfirmModal = document.getElementById('order-confirm-modal');

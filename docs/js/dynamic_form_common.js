@@ -28,7 +28,7 @@ export async function loadDynamicQuestionsCommon(formName) {
  * @param {string} containerId - フォーム要素を挿入するコンテナのID
  * @param {string} formName - フォームの名前 (ページ固有のロジック分岐に使用)
  */
-export function renderDynamicQuestionsCommon(questions, containerId, formName) {
+export function renderDynamicQuestionsCommon(questions, containerId, formName, initialValues = {}) {
   const dynamicQuestionsContainer = document.getElementById(containerId);
   if (!dynamicQuestionsContainer) {
     console.error(`Dynamic questions container with ID "${containerId}" not found.`);
@@ -69,6 +69,9 @@ export function renderDynamicQuestionsCommon(questions, containerId, formName) {
         inputElement.name = question.question_key;
         inputElement.id = question.question_key;
         if (question.is_required) inputElement.required = true;
+        if (initialValues[question.question_key] !== undefined) {
+          inputElement.value = initialValues[question.question_key];
+        }
 
         // ページ固有の属性設定
         if (formName === 'room_reservation') {
@@ -77,7 +80,9 @@ export function renderDynamicQuestionsCommon(questions, containerId, formName) {
             }
             if (question.question_key === 'numberOfWeeks' || question.question_key === 'participants') {
                 inputElement.min = '1';
-                inputElement.value = '1'; // 初期値
+                if (initialValues[question.question_key] === undefined) { // 初期値が指定されていなければデフォルトを設定
+                    inputElement.value = '1'; // 初期値
+                }
             }
         } else if (formName === 'childcare_reservation') {
             if (question.input_type === 'time') {
@@ -94,6 +99,9 @@ export function renderDynamicQuestionsCommon(questions, containerId, formName) {
         inputElement.name = question.question_key;
         inputElement.id = question.question_key;
         if (question.is_required) inputElement.required = true;
+        if (initialValues[question.question_key] !== undefined) {
+          inputElement.value = initialValues[question.question_key];
+        }
         break;
       case 'select':
         inputElement = document.createElement('select');
@@ -118,6 +126,9 @@ export function renderDynamicQuestionsCommon(questions, containerId, formName) {
             inputElement.appendChild(option);
           });
         }
+        if (initialValues[question.question_key] !== undefined) {
+          inputElement.value = initialValues[question.question_key];
+        }
         break;
       case 'radio':
       case 'checkbox':
@@ -135,6 +146,16 @@ export function renderDynamicQuestionsCommon(questions, containerId, formName) {
             radioOrCheckbox.id = optionId;
             radioOrCheckbox.value = optionText;
             // required属性は個々のラジオボタンにはつけない
+
+            // 初期値が設定されているかチェック
+            if (initialValues[question.question_key] !== undefined) {
+              if (question.input_type === 'radio' && initialValues[question.question_key] === optionText) {
+                radioOrCheckbox.checked = true;
+              } else if (question.input_type === 'checkbox' && Array.isArray(initialValues[question.question_key]) && initialValues[question.question_key].includes(optionText)) {
+                radioOrCheckbox.checked = true;
+              }
+            }
+
             const optionLabel = document.createElement('label');
             optionLabel.htmlFor = optionId;
             optionLabel.textContent = optionText;

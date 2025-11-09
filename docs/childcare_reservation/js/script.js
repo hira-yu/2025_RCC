@@ -125,7 +125,16 @@ async function initializeReservationForm() {
 
   // 動的な質問を読み込む
   dynamicQuestions = await loadDynamicQuestionsCommon('childcare_reservation');
-  renderDynamicQuestionsCommon(dynamicQuestions, 'dynamic-questions-container', 'childcare_reservation');
+
+  // 初期値の設定
+  const initialValues = {};
+  const nextWednesday = findNextAvailableWednesday(searchStartDate);
+  if (nextWednesday) {
+      initialValues['reservationDate'] = nextWednesday.toISOString().split('T')[0]; // YYYY-MM-DD形式
+  }
+  initialValues['startTime'] = '09:30'; // デフォルトの開始時刻
+
+  renderDynamicQuestionsCommon(dynamicQuestions, 'dynamic-questions-container', 'childcare_reservation', initialValues);
 
   // 予約確認ボタンのイベントリスナー
   confirmReservationBtn.addEventListener('click', openReservationConfirmModal);
