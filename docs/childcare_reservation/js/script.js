@@ -35,6 +35,15 @@ async function loadDynamicQuestions() {
           case 'tel': // telタイプを追加
           case 'date': // dateタイプを追加
           case 'time': // timeタイプを追加
+          case 'password': // 追加
+          case 'range': // 追加
+          case 'datetime-local': // 追加
+          case 'month': // 追加
+          case 'week': // 追加
+          case 'color': // 追加
+          case 'file': // 追加
+          case 'search': // 追加
+          case 'url': // 追加
             inputElement = document.createElement('input');
             inputElement.type = question.input_type;
             inputElement.name = question.question_key;
