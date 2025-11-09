@@ -265,6 +265,7 @@ function handleError(error) {
 // その他のイベントリスナー
 // ------------------------------------------- 
 document.addEventListener('DOMContentLoaded', () => {
+  const reservationConfirmModal = document.getElementById('order-confirm-modal'); // DOMContentLoaded内で再取得
   // reservationConfirmModal の閉じるボタンにイベントリスナーを追加
   const reservationConfirmModalCloseButton = reservationConfirmModal.querySelector('.close');
   if (reservationConfirmModalCloseButton) {
