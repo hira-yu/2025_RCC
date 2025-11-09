@@ -5,7 +5,7 @@ const COMMON_API_ENDPOINT = 'https://momoport.hirayu.jp/php/get_form_questions.p
  * @param {string} formName - フォームの名前 (例: 'room_reservation')
  * @returns {Promise<Array>} 質問データの配列
  */
-async function loadDynamicQuestionsCommon(formName) {
+export async function loadDynamicQuestionsCommon(formName) {
   try {
     const response = await fetch(`${COMMON_API_ENDPOINT}?form_name=${formName}`);
     const data = await response.json();
@@ -28,7 +28,7 @@ async function loadDynamicQuestionsCommon(formName) {
  * @param {string} containerId - フォーム要素を挿入するコンテナのID
  * @param {string} formName - フォームの名前 (ページ固有のロジック分岐に使用)
  */
-function renderDynamicQuestionsCommon(questions, containerId, formName) {
+export function renderDynamicQuestionsCommon(questions, containerId, formName) {
   const dynamicQuestionsContainer = document.getElementById(containerId);
   if (!dynamicQuestionsContainer) {
     console.error(`Dynamic questions container with ID "${containerId}" not found.`);
@@ -168,7 +168,7 @@ function renderDynamicQuestionsCommon(questions, containerId, formName) {
  * @param {Array} questions - 質問データの配列
  * @returns {Object} 収集されたデータ
  */
-function getDynamicQuestionsDataCommon(questions) {
+export function getDynamicQuestionsDataCommon(questions) {
     const data = {};
     questions.forEach(question => {
         const inputElement = document.getElementById(question.question_key);
