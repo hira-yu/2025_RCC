@@ -189,6 +189,7 @@ function openReservationConfirmModal() {
 function closeReservationConfirmModal() {
   reservationConfirmModal.style.display = 'none';
 }
+window.closeReservationConfirmModal = closeReservationConfirmModal; // グローバルに公開
 
 // ------------------------------------------- 
 // 予約データの送信
@@ -264,6 +265,7 @@ function handleError(error) {
 function closeResultModal() {
   document.getElementById('result-modal').style.display = 'none';
 }
+window.closeResultModal = closeResultModal; // グローバルに公開
 
 // ------------------------------------------- 
 // その他のイベントリスナー

@@ -32,10 +32,12 @@ function openResultModal(title, message) {
   document.getElementById('result-modal-message').textContent = message;
   document.getElementById('result-modal').style.display = 'inline-flex';
 }
+window.openResultModal = openResultModal; // グローバルに公開
 
 function closeResultModal() {
   document.getElementById('result-modal').style.display = 'none';
 }
+window.closeResultModal = closeResultModal; // グローバルに公開
 
 // -------------------------------------------
 // ヘルパー関数：次の利用可能な水曜日を検索
@@ -355,10 +357,12 @@ function openReservationConfirmModal() {
 
   reservationConfirmModal.style.display = 'inline-flex';
 }
+window.openReservationConfirmModal = openReservationConfirmModal; // グローバルに公開
 
 function closeReservationConfirmModal() {
   reservationConfirmModal.style.display = 'none';
 }
+window.closeReservationConfirmModal = closeReservationConfirmModal; // グローバルに公開
 
 // -------------------------------------------
 // 予約データの送信
@@ -398,6 +402,7 @@ async function submitReservation() {
     isSubmitting = false; // フラグをリセット
   }
 }
+window.submitReservation = submitReservation; // グローバルに公開
 
 async function handleReservationSuccess(response) {
   hideLoadingOverlay();
@@ -450,6 +455,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultModalPrimaryButton = resultModal.querySelector('.btn-primary');
   if (resultModalPrimaryButton) {
       resultModalPrimaryButton.addEventListener('click', closeResultModal);
+  }
+
+  // confirmReservationBtn のイベントリスナー
+  const confirmReservationBtn = document.getElementById('confirmReservationBtn');
+  if (confirmReservationBtn) {
+      confirmReservationBtn.addEventListener('click', openReservationConfirmModal);
+  }
+
+  // submitReservationBtn のイベントリスナー
+  const submitReservationBtn = document.getElementById('submit-reservation');
+  if (submitReservationBtn) {
+      submitReservationBtn.addEventListener('click', submitReservation);
   }
 });
 

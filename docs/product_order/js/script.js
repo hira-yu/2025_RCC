@@ -210,6 +210,7 @@ function changeQuantity(delta) {
   
   qtyInput.value = newValue;
 }
+window.changeQuantity = changeQuantity; // グローバルに公開
 
 function updateModalPrice() {
   if (!currentProduct) return;
@@ -237,6 +238,7 @@ function closeModal() {
   document.getElementById('modal-message').textContent = '';
   renderCart(); // カートの数量を更新したかもしれないので再描画
 }
+window.closeModal = closeModal; // グローバルに公開
 
 // -------------------------------------------
 // モーダルからのカート追加 (新規作成)
@@ -316,6 +318,7 @@ function addToCartFromModal() {
     openResultModal('エラー', errorMessage);
   }
 }
+window.addToCartFromModal = addToCartFromModal; // グローバルに公開
 
 // -------------------------------------------
 // カートの更新 (変更なし)
@@ -428,10 +431,12 @@ function openOrderModal() {
     renderCart(); 
     orderConfirmModal.style.display = 'inline-flex';
 }
+window.openOrderModal = openOrderModal; // グローバルに公開
 
 function closeOrderModal() {
     orderConfirmModal.style.display = 'none';
 }
+window.closeOrderModal = closeOrderModal; // グローバルに公開
 
 // -------------------------------------------
 // 注文データの送信
@@ -498,6 +503,7 @@ async function submitOrder() {
   }
 
 }
+window.submitOrder = submitOrder; // グローバルに公開
 
 async function handleOrderSuccess(response) {
   hideLoadingOverlay(); // ローディングオーバーレイを非表示
@@ -553,26 +559,7 @@ function handleError(error) {
 // -------------------------------------------
 // その他のイベントリスナー
 // -------------------------------------------
-// モーダル外クリックで閉じる処理
-window.onclick = function(event) {
-  const productModal = document.getElementById('product-modal');
-  const orderConfirmModal = document.getElementById('order-confirm-modal'); // 追加
-  const resultModal = document.getElementById('result-modal'); // 追加
-  const orderStatusModal = document.getElementById('order-status-modal'); // 追加
 
-  if (event.target == productModal) {
-    closeModal();
-  }
-  if (event.target == orderConfirmModal) { // 追加
-    closeOrderModal();
-  }
-  if (event.target == resultModal) { // 追加
-    closeResultModal();
-  }
-  if (event.target == orderStatusModal) { // 追加
-    closeOrderStatusModal();
-  }
-}
 
 // URLパラメータからLINEユーザーIDを取得し、sessionStorageに保存
 const urlParams = new URLSearchParams(window.location.search);
@@ -620,10 +607,12 @@ function openOrderHistoryModal() {
     orderHistoryModal.style.display = 'inline-flex';
     loadUserOrders(lineUserId);
 }
+window.openOrderHistoryModal = openOrderHistoryModal; // グローバルに公開
 
 function closeOrderHistoryModal() {
     orderHistoryModal.style.display = 'none';
 }
+window.closeOrderHistoryModal = closeOrderHistoryModal; // グローバルに公開
 
 async function loadUserOrders(lineUserId) {
     orderHistoryList.innerHTML = '<p>注文履歴を読み込み中...</p>';
@@ -704,6 +693,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderConfirmModalCloseButton = orderConfirmModal.querySelector('.close');
     if (orderConfirmModalCloseButton) {
         orderConfirmModalCloseButton.addEventListener('click', closeOrderModal);
+    }
+
+    // submit-order ボタンにイベントリスナーを追加
+    const submitOrderButton = document.getElementById('submit-order');
+    if (submitOrderButton) {
+        submitOrderButton.addEventListener('click', submitOrder);
+    }
+
+    // product-modal の閉じるボタンにイベントリスナーを追加
+    const productModal = document.getElementById('product-modal');
+    const productModalCloseButton = productModal.querySelector('.close');
+    if (productModalCloseButton) {
+        productModalCloseButton.addEventListener('click', closeModal);
+    }
+
+    // product-modal 内の数量変更ボタンにイベントリスナーを追加
+    const qtyButtons = productModal.querySelectorAll('.qty-button');
+    qtyButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const delta = parseInt(event.target.dataset.delta);
+            changeQuantity(delta);
+        });
+    });
+
+    // product-modal 内のカート追加ボタンにイベントリスナーを追加
+    const addToCartButton = document.getElementById('add-to-cart-button');
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', addToCartFromModal);
+    }
+
+    // result-modal の閉じるボタンにイベントリスナーを追加
+    const resultModal = document.getElementById('result-modal');
+    const resultModalCloseButton = resultModal.querySelector('.close');
+    if (resultModalCloseButton) {
+        resultModalCloseButton.addEventListener('click', closeResultModal);
+    }
+    const resultModalPrimaryButton = resultModal.querySelector('.btn-primary');
+    if (resultModalPrimaryButton) {
+        resultModalPrimaryButton.addEventListener('click', closeResultModal);
+    }
+
+    // order-status-modal の閉じるボタンにイベントリスナーを追加
+    const orderStatusModal = document.getElementById('order-status-modal');
+    const orderStatusModalCloseButton = orderStatusModal.querySelector('.close');
+    if (orderStatusModalCloseButton) {
+        orderStatusModalCloseButton.addEventListener('click', closeOrderStatusModal);
+    }
+
+    // order-history-modal の閉じるボタンにイベントリスナーを追加
+    const orderHistoryModal = document.getElementById('order-history-modal');
+    const orderHistoryModalCloseButton = orderHistoryModal.querySelector('.close');
+    if (orderHistoryModalCloseButton) {
+        orderHistoryModalCloseButton.addEventListener('click', closeOrderHistoryModal);
+    }
+    const orderHistoryModalPrimaryButton = orderHistoryModal.querySelector('.btn-primary');
+    if (orderHistoryModalPrimaryButton) {
+        orderHistoryModalPrimaryButton.addEventListener('click', closeOrderHistoryModal);
     }
 });
 

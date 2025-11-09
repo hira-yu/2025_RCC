@@ -52,7 +52,7 @@
                 <!-- 動的に生成される質問項目がここに挿入されます -->
             </div>
 
-            <button id="submit-order" class="submit-button btn btn-primary" onclick="submitOrder()">注文確定</button>
+            <button id="submit-order" class="submit-button btn btn-primary">注文確定</button>
             <p id="message" class="error"></p>
         </div>
     </div>
@@ -70,7 +70,7 @@
 
 <div id="product-modal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close">&times;</span>
         <div id="modal-image-container">
             <img id="modal-image" src="" alt="商品画像">
         </div>
@@ -89,11 +89,11 @@
         <div id="modal-order-controls">
             <label>数量:</label>
             <div class="quantity-control">
-                <button class="qty-button btn btn-outline" onclick="changeQuantity(-1)">&minus;</button>
+                <button class="qty-button btn btn-outline" data-delta="-1">&minus;</button>
                 <input type="number" id="modal-quantity" value="1" min="1">
-                <button class="qty-button btn btn-outline" onclick="changeQuantity(1)">&plus;</button>
+                <button class="qty-button btn btn-outline" data-delta="1">&plus;</button>
             </div>
-            <button id="add-to-cart-button" class="btn btn-success" onclick="addToCartFromModal()">カートに追加</button>
+            <button id="add-to-cart-button" class="btn btn-success">カートに追加</button>
         </div>
         
         <p id="modal-message" class="error"></p>
@@ -102,16 +102,16 @@
 
 <div id="result-modal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeResultModal()">&times;</span>
+        <span class="close">&times;</span>
         <h2 id="result-modal-title"></h2>
         <p id="result-modal-message"></p>
-        <button class="btn btn-primary" onclick="closeResultModal()">閉じる</button>
+        <button class="btn btn-primary">閉じる</button>
     </div>
 </div>
 
 <div id="order-status-modal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeOrderStatusModal()">&times;</span>
+        <span class="close">&times;</span>
         <h2>注文ステータス確認</h2>
         <div class="input-group">
             <label for="customerOrderId">注文ID:</label>
@@ -125,12 +125,12 @@
 
 <div id="order-history-modal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeOrderHistoryModal()">&times;</span>
+        <span class="close">&times;</span>
         <h2>注文履歴</h2>
         <div id="order-history-list">
             <p class="empty-history-message">注文履歴がありません。</p>
         </div>
-        <button class="btn btn-primary" onclick="closeOrderHistoryModal()">閉じる</button>
+        <button class="btn btn-primary">閉じる</button>
     </div>
 </div>
 
