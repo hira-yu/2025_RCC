@@ -369,7 +369,9 @@ input[type="radio"]:checked + label::before {
 /* ラジオボタンの選択肢を囲むdivのスタイル */
 .form-group > div[id][data-is-required] {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* 横並びにする */
+    flex-wrap: wrap; /* 画面幅が狭い場合に折り返す */
+    gap: 20px; /* ラジオボタン間の間隔 */
     margin-bottom: 15px; /* 他のフォーム要素との間隔を調整 */
 }
 
