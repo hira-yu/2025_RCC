@@ -25,12 +25,25 @@ class MultiSelectDropdown {
     // ... 既存のメソッド ...
 
     reset() {
-        this.selectedOptions = [];
+        this.updateSelection([]);
+    }
+
+    updateSelection(selectedValues = []) {
+        this.selectedOptions = [...selectedValues];
         Array.from(this.element.options).forEach(option => {
-            option.selected = false;
+            option.selected = this.selectedOptions.includes(option.value);
         });
+        
+        // カスタムUIのチェックボックス表示を更新
+        this.optionsContainer.querySelectorAll('.option').forEach(optEl => {
+            if (this.selectedOptions.includes(optEl.dataset.value)) {
+                optEl.classList.add('selected');
+            } else {
+                optEl.classList.remove('selected');
+            }
+        });
+
         this.updateSelectedDisplay();
-        this.updateNativeSelect();
     }
 
     createDropdown() {
