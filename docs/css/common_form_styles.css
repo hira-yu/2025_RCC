@@ -304,3 +304,86 @@ h1 {
         border-width: 6px;
     }
 }
+
+/* --- ラジオボタンのカスタムスタイル --- */
+/* ラジオボタンのinput要素自体を非表示にする */
+input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* ラジオボタンのラベルにスタイルを適用 */
+input[type="radio"] + label {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 30px; /* カスタムラジオボタンのスペース */
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #333;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* カスタムラジオボタンの円形部分 (未選択時) */
+input[type="radio"] + label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+/* カスタムラジオボタンの中心の丸 (選択時) */
+input[type="radio"] + label::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #007bff; /* 選択時の色 */
+    opacity: 0; /* 最初は非表示 */
+    transition: all 0.2s ease;
+}
+
+/* ラジオボタンが選択された時のスタイル */
+input[type="radio"]:checked + label::before {
+    border-color: #007bff; /* 選択時のボーダー色 */
+    background: #e7f3ff; /* 選択時の背景色 */
+}
+
+input[type="radio"]:checked + label::after {
+    opacity: 1; /* 選択時に表示 */
+}
+
+/* ラジオボタンの選択肢を囲むdivのスタイル */
+.form-group > div[id][data-is-required] {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; /* 他のフォーム要素との間隔を調整 */
+}
+
+/* ラジオボタンの選択肢の間のスペースを調整 */
+.form-group > div[id][data-is-required] br {
+    display: none; /* dynamic_form_common.js で追加されるbrを非表示にする */
+}
+
+/* ホバー時のスタイル */
+input[type="radio"] + label:hover::before {
+    border-color: #0056b3;
+}
+
