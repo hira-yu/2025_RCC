@@ -112,13 +112,16 @@ export function renderDynamicQuestionsCommon(questions, containerId, formName, i
         // room_reservation の equipment の select multiple の場合
         if (formName === 'room_reservation' && question.question_key === 'equipment') {
             inputElement.multiple = true;
-        } else {
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '選択してください';
         }
 
-        inputElement.appendChild(defaultOption);
+        // defaultOption は常に作成し、equipment 以外の場合のみ追加
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '選択してください';
+        if (!(formName === 'room_reservation' && question.question_key === 'equipment')) {
+            inputElement.appendChild(defaultOption);
+        }
+        
         if (question.options) {
           JSON.parse(question.options).forEach(optionText => {
             const option = document.createElement('option');
