@@ -1,14 +1,34 @@
-// dynamic_form_common.js を読み込むためのコメント（HTML側で読み込む）
-// import { loadDynamicQuestionsCommon, renderDynamicQuestionsCommon, getDynamicQuestionsDataCommon } from '../js/dynamic_form_common.js';
+import { loadDynamicQuestionsCommon, renderDynamicQuestionsCommon, getDynamicQuestionsDataCommon } from '../js/dynamic_form_common.js';
 
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
 let dynamicQuestions = []; // 動的に生成される質問項目を保持する変数
 
 // -------------------------------------------
+// フォームの初期化
+// -------------------------------------------
+async function initializeReservationForm() {
+    dynamicQuestions = await loadDynamicQuestionsCommon('room_reservation');
+    renderDynamicQuestionsCommon(dynamicQuestions, 'dynamic-questions-container', 'room_reservation');
+
+    // 日付の初期値を今日に設定
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayString = `${year}-${month}-${day}`;
+
+    const reservationDateInput = document.getElementById('reservationDate');
+    if (reservationDateInput) {
+        reservationDateInput.value = todayString;
+        reservationDateInput.min = todayString; // 過去の日付を選択できないようにする
+    }
+}
+
+// -------------------------------------------
 // バリデーション関数
 // -------------------------------------------
 function validateReservation() {
-    const dynamicQuestionsData = getDynamicQuestionsData(); // 動的質問データを取得
+    const dynamicQuestionsData = getDynamicQuestionsDataCommon(dynamicQuestions); // 動的質問データを取得
 
     const reservationDateValue = dynamicQuestionsData['reservationDate'];
     const numberOfWeeks = parseInt(dynamicQuestionsData['numberOfWeeks']);
@@ -104,7 +124,7 @@ function openReservationConfirmModal() {
   }
 
   // 動的に生成された質問のデータを取得
-  const dynamicQuestionsData = getDynamicQuestionsData();
+  const dynamicQuestionsData = getDynamicQuestionsDataCommon(dynamicQuestions);
 
   // 必須項目のバリデーション (getDynamicQuestionsDataでは行わないためここで実施)
   let allRequiredFilled = true;

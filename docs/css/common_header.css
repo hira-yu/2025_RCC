@@ -27,6 +27,7 @@ h1, .page-title {
 }
 
 .line-login-container {
+    display: none; /* LINEアイコンを非表示にする */
     position: absolute;
     top: 20px;
     right: 20px; /* Adjust this value to place it to the left of order-history-icon (right: 80px) */
@@ -37,6 +38,28 @@ h1, .page-title {
     height: 2.8em; /* Adjust size as needed */
     width: auto;
     vertical-align: bottom;
+}
+
+.icon_box {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px; /* アイコン間のスペース */
+}
+
+.order-history-icon,
+.order-status-icon {
+    font-size: 2.5em; /* アイコンのサイズ */
+    color: #0056b3; /* アイコンの色 */
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.order-history-icon:hover,
+.order-status-icon:hover {
+    color: #007bff; /* ホバー時の色 */
 }
 
 @media (max-width: 768px) { /* スマートフォンなどの小さい画面 */
@@ -54,5 +77,13 @@ h1, .page-title {
         top: auto; /* topプロパティをリセット */
         margin-top: 10px; /* 上部に少し余白を追加 */
         margin-top: 0; /* 既存のmargin-topをリセット */
+    }
+
+    .icon_box {
+        position: static; /* 絶対配置を解除 */
+        justify-content: center; /* 中央寄せ */
+        margin-top: 10px; /* 上部に少し余白を追加 */
+        width: 100%; /* 幅を100%に */
+        gap: 20px; /* アイコン間のスペースを広げる */
     }
 }

@@ -1,127 +1,7 @@
+import { loadDynamicQuestionsCommon, renderDynamicQuestionsCommon, getDynamicQuestionsDataCommon } from '../js/dynamic_form_common.js';
+
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
-
-const API_ENDPOINT = 'https://momoport.hirayu.jp/php/get_form_questions.php'; // 認証不要な質問取得APIエンドポイントに変更
 let dynamicQuestions = []; // 動的に生成される質問項目を保持する変数
-
-// -------------------------------------------
-// 動的な質問を読み込み、フォームに生成する
-// -------------------------------------------
-async function loadDynamicQuestions() {
-  try {
-    const response = await fetch(`${API_ENDPOINT}?form_name=childcare_reservation`); // form_nameを修正
-    const data = await response.json();
-
-    if (data.status === 'success' && data.questions) {
-      dynamicQuestions = data.questions; // 質問データを保持
-      const dynamicQuestionsContainer = document.getElementById('dynamic-questions-container'); // 既存の要素を取得
-      dynamicQuestionsContainer.innerHTML = ''; // 既存の内容をクリア
-
-      dynamicQuestions.sort((a, b) => a.order_num - b.order_num).forEach(question => {
-        const questionGroup = document.createElement('div');
-        questionGroup.className = 'form-group';
-
-        const label = document.createElement('label');
-        label.textContent = question.question_text; // コロンはHTML側で追加しない
-        if (question.is_required) {
-          label.innerHTML += ' <span class="required">*</span>';
-        }
-        questionGroup.appendChild(label);
-
-        let inputElement;
-        switch (question.input_type) {
-          case 'text':
-          case 'number':
-          case 'email':
-          case 'tel': // telタイプを追加
-          case 'date': // dateタイプを追加
-          case 'time': // timeタイプを追加
-          case 'password': // 追加
-          case 'range': // 追加
-          case 'datetime-local': // 追加
-          case 'month': // 追加
-          case 'week': // 追加
-          case 'color': // 追加
-          case 'file': // 追加
-          case 'search': // 追加
-          case 'url': // 追加
-            inputElement = document.createElement('input');
-            inputElement.type = question.input_type;
-            inputElement.name = question.question_key;
-            inputElement.id = question.question_key;
-            if (question.is_required) inputElement.required = true;
-            // timeタイプの場合、step属性を追加
-            if (question.input_type === 'time') {
-                inputElement.step = '900'; // 15分単位
-            }
-            // numberタイプの場合、min/max属性を追加 (childAge用)
-            if (question.question_key === 'childAge') {
-                inputElement.min = '0';
-                inputElement.max = '15';
-            }
-            break;
-          case 'textarea':
-            inputElement = document.createElement('textarea');
-            inputElement.name = question.question_key;
-            inputElement.id = question.question_key;
-            if (question.is_required) inputElement.required = true;
-            break;
-          case 'select':
-            inputElement = document.createElement('select');
-            inputElement.name = question.question_key;
-            inputElement.id = question.question_key;
-            if (question.is_required) inputElement.required = true;
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '選択してください';
-            inputElement.appendChild(defaultOption);
-            if (question.options) {
-              JSON.parse(question.options).forEach(optionText => {
-                const option = document.createElement('option');
-                option.value = optionText;
-                option.textContent = optionText;
-                inputElement.appendChild(option);
-              });
-            }
-            break;
-          case 'radio':
-          case 'checkbox':
-            inputElement = document.createElement('div'); // ラジオボタン/チェックボックスはグループ化するためdiv
-            inputElement.id = question.question_key;
-            if (question.is_required && question.input_type === 'radio') {
-              inputElement.dataset.isRequired = 'true'; // ラジオボタングループに必須属性を追加
-            }
-            if (question.options) {
-              JSON.parse(question.options).forEach(optionText => {
-                const optionId = `${question.question_key}-${optionText.replace(/\s/g, '-')}`;
-                const radioOrCheckbox = document.createElement('input');
-                radioOrCheckbox.type = question.input_type;
-                radioOrCheckbox.name = question.question_key;
-                radioOrCheckbox.id = optionId;
-                radioOrCheckbox.value = optionText;
-                // required属性は個々のラジオボタンにはつけない
-                const optionLabel = document.createElement('label');
-                optionLabel.htmlFor = optionId;
-                optionLabel.textContent = optionText;
-                inputElement.appendChild(radioOrCheckbox);
-                inputElement.appendChild(optionLabel);
-                inputElement.appendChild(document.createElement('br'));
-              });
-            }
-            break;
-          default:
-            console.warn(`Unknown input type: ${question.input_type}`);
-            return;
-        }
-        questionGroup.appendChild(inputElement);
-        dynamicQuestionsContainer.appendChild(questionGroup);
-      });
-    } else {
-      console.error('Failed to load dynamic questions:', data.message);
-    }
-  } catch (error) {
-    console.error('Error loading dynamic questions:', error);
-  }
-}
 
 
 
@@ -244,7 +124,8 @@ async function initializeReservationForm() {
   }
 
   // 動的な質問を読み込む
-  await loadDynamicQuestions();
+  dynamicQuestions = await loadDynamicQuestionsCommon('childcare_reservation');
+  renderDynamicQuestionsCommon(dynamicQuestions, 'dynamic-questions-container', 'childcare_reservation');
 
   // 予約確認ボタンのイベントリスナー
   confirmReservationBtn.addEventListener('click', openReservationConfirmModal);
@@ -253,40 +134,10 @@ async function initializeReservationForm() {
 }
 
 // -------------------------------------------
-// 動的に生成された質問項目からデータを収集するヘルパー関数
-// -------------------------------------------
-function getDynamicQuestionsData() {
-    const data = {};
-    const dynamicQuestionsContainer = document.getElementById('dynamic-questions-container');
-    if (dynamicQuestionsContainer) {
-        dynamicQuestions.forEach(question => {
-            const inputElement = document.getElementById(question.question_key);
-            if (!inputElement) {
-                // console.warn(`動的質問項目 ${question.question_key} の要素が見つかりません。`);
-                return;
-            }
-
-            let value;
-            if (question.input_type === 'checkbox') {
-                const checkboxes = document.querySelectorAll(`input[name="${question.question_key}"]:checked`);
-                value = Array.from(checkboxes).map(cb => cb.value);
-            } else if (question.input_type === 'radio') {
-                const radio = document.querySelector(`input[name="${question.question_key}"]:checked`);
-                value = radio ? radio.value : '';
-            } else {
-                value = inputElement.value.trim();
-            }
-            data[question.question_key] = value;
-        });
-    }
-    return data;
-}
-
-// -------------------------------------------
 // バリデーション関数
 // -------------------------------------------
 function validateReservation() {
-    const dynamicQuestionsData = getDynamicQuestionsData(); // 動的質問データを取得
+    const dynamicQuestionsData = getDynamicQuestionsDataCommon(dynamicQuestions); // 動的質問データを取得
 
     // 今日の日付を取得 (時刻情報は無視)
     const today = new Date();
@@ -433,7 +284,7 @@ function openReservationConfirmModal() {
   }
 
   // 動的に生成された質問のデータを取得
-  const dynamicQuestionsData = getDynamicQuestionsData();
+  const dynamicQuestionsData = getDynamicQuestionsDataCommon(dynamicQuestions);
 
   // 必須項目のバリデーション (getDynamicQuestionsDataでは行わないためここで実施)
   let allRequiredFilled = true;
