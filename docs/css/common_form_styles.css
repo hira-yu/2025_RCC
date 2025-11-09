@@ -363,11 +363,7 @@ input[type="radio"] + label::after {
 /* ラジオボタンが選択された時のスタイル */
 input[type="radio"]:checked + label::before {
     border-color: #007bff; /* 選択時のボーダー色 */
-    background: #e7f3ff; /* 選択時の背景色 */
-}
-
-input[type="radio"]:checked + label::after {
-    opacity: 1; /* 選択時に表示 */
+    background: #007bff; /* 選択時の背景色で塗りつぶす */
 }
 
 /* ラジオボタンの選択肢を囲むdivのスタイル */
