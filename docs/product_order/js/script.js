@@ -693,6 +693,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (orderHistoryIcon) {
         orderHistoryIcon.addEventListener('click', openOrderHistoryModal);
     }
+
+    // view-cart-button のイベントリスナーを追加
+    const viewCartButton = document.querySelector('.view-cart-button');
+    if (viewCartButton) {
+        viewCartButton.addEventListener('click', openOrderModal);
+    }
 });
 
 // モーダル外クリックで閉じる処理に注文履歴モーダルを追加
