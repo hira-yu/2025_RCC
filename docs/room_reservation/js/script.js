@@ -261,6 +261,10 @@ function handleError(error) {
   openResultModal('エラー', errorMessage);
 }
 
+function closeResultModal() {
+  document.getElementById('result-modal').style.display = 'none';
+}
+
 // ------------------------------------------- 
 // その他のイベントリスナー
 // ------------------------------------------- 
