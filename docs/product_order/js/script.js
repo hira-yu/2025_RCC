@@ -106,13 +106,16 @@ function displayProducts(products) {
     // ★ クリックイベントを追加し、openModalを呼び出す
     card.onclick = () => openModal(product.id);
     
-    const imageHtml = product.imageUrl ? `
+    const imageHtml = product.image_url ? `
       <div class="product-image-container">
-        <img src="${product.imageUrl}" alt="${product.name}" class="product-image">
+        <img src="https://momoport.hirayu.jp${product.image_url}" alt="${product.name}" class="product-image">
       </div>
     ` : `<div class="product-image-container no-image">
         <img src="${noImg_url}" alt="画像なし" class="product-image">
       </div>`;
+
+    const allergens = [...(product.specified_allergens || []), ...(product.recommended_allergens || [])];
+    const allergensDisplay = allergens.length > 0 ? allergens.join(', ') : '未記載';
 
     const detailsHtml = `
       <div>
@@ -120,7 +123,7 @@ function displayProducts(products) {
         <p class="product-price">¥${product.price.toLocaleString()}</p>
         <div class="product-info details">
           <strong>原材料:</strong> ${product.ingredients || '未記載'}<br>
-          <strong>アレルギー:</strong> ${product.allergens || '未記載'}
+          <strong>アレルギー:</strong> ${allergensDisplay}
         </div>
       </div>
     `;
@@ -143,10 +146,12 @@ function openModal(productId) {
   document.getElementById('modal-product-name').textContent = product.name;
   document.getElementById('modal-product-price').textContent = `価格: ¥${product.price.toLocaleString()}`;
   document.getElementById('modal-ingredients').innerHTML = `<strong>原材料:</strong> ${product.ingredients || '未記載'}`;
-  document.getElementById('modal-allergens').innerHTML = `<strong>アレルギー:</strong> ${product.allergens || '未記載'}`;
+  const allergens = [...(product.specified_allergens || []), ...(product.recommended_allergens || [])];
+  const allergensDisplay = allergens.length > 0 ? allergens.join(', ') : '未記載';
+  document.getElementById('modal-allergens').innerHTML = `<strong>アレルギー:</strong> ${allergensDisplay}`;
   
   const modalImage = document.getElementById('modal-image');
-  modalImage.src = product.imageUrl || noImg_url;
+  modalImage.src = product.image_url ? `https://momoport.hirayu.jp${product.image_url}` : noImg_url;
   modalImage.alt = product.name;
 
   // カートの現在の数量を反映させる
@@ -297,7 +302,7 @@ function addToCartFromModal() {
         id: currentProduct.id,
         name: currentProduct.name,
         price: currentProduct.price,
-        imageUrl: currentProduct.imageUrl,
+        imageUrl: currentProduct.image_url,
         ingredients: currentProduct.ingredients,
         allergens: currentProduct.allergens,
         selectedOptions: selectedOptions,
