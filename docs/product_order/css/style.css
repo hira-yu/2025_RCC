@@ -84,6 +84,12 @@
     border-color: #00bcd4; /* チェックされた時の枠線色 */
 }
 
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* 要素間のスペース */
+}
+
 /* input[type="number"] の幅調整 */
 .quantity-control input[type="number"] {
     width: 80px; /* 数量コントロール内のinputの幅を調整 */
@@ -380,4 +386,15 @@
     height: 100%;
     object-fit: contain; /* 画像のアスペクト比を維持し、コンテナに収める */
     display: block;
+}
+
+/* input type="number" のデフォルトの矢印を非表示にする */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Firefox用 */
 }
