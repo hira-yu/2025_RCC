@@ -5,6 +5,9 @@ input[type="datetime-local"],
 input[type="month"],
 input[type="week"] {
     -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff; /* 背景色を白に強制 */
     color: #000;
 }
 
