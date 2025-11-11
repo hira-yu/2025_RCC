@@ -87,7 +87,7 @@
 .quantity-control {
     display: flex;
     align-items: center;
-    gap: 5px; /* 要素間のスペース */
+    gap: 10px; /* 要素間のスペースを少し大きくする */
 }
 
 /* input[type="number"] の幅調整 */
