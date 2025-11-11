@@ -3,6 +3,17 @@ import { loadDynamicQuestionsCommon, renderDynamicQuestionsCommon, getDynamicQue
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
 let dynamicQuestions = []; // 動的に生成される質問項目を保持する変数
 
+// DOM要素をグローバル変数として取得
+const reservationForm = document.getElementById('reservationForm');
+const confirmReservationBtn = document.getElementById('confirmReservationBtn');
+const reservationConfirmModal = document.getElementById('order-confirm-modal');
+const reservationDetailsEl = document.getElementById('reservation-details');
+const totalPriceDetailEl = document.getElementById('total-price-detail');
+const submitReservationBtn = document.getElementById('submit-reservation');
+let currentReservation = {}; // 現在の予約情報を保持
+let isSubmitting = false; // 多重送信防止フラグ
+let allReservationDates = []; // 連続予約の日付を保持
+
 // -------------------------------------------
 // フォームの初期化
 // -------------------------------------------
@@ -269,7 +280,15 @@ window.closeResultModal = closeResultModal; // グローバルに公開
 // その他のイベントリスナー
 // ------------------------------------------- 
 document.addEventListener('DOMContentLoaded', () => {
-  const reservationConfirmModal = document.getElementById('order-confirm-modal'); // DOMContentLoaded内で再取得
+  // confirmReservationBtn のイベントリスナー
+  if (confirmReservationBtn) {
+      confirmReservationBtn.addEventListener('click', openReservationConfirmModal);
+  }
+  // submitReservationBtn のイベントリスナー
+  if (submitReservationBtn) {
+      submitReservationBtn.addEventListener('click', submitReservation);
+  }
+
   // reservationConfirmModal の閉じるボタンにイベントリスナーを追加
   const reservationConfirmModalCloseButton = reservationConfirmModal.querySelector('.close');
   if (reservationConfirmModalCloseButton) {
