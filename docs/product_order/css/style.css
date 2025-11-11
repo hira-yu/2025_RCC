@@ -398,3 +398,25 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield; /* Firefox用 */
 }
+
+@media screen and (max-width: 768px) {
+    #product-list {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .product-card {
+        font-size: 1.2em;
+    }
+
+    .cart-info {
+        font-size: 1.5em;
+    }
+
+    #total-price-mini {
+        font-size: 1.2em;
+    }
+
+    .view-cart-button {
+        font-size: 1.8em;
+    }
+}
