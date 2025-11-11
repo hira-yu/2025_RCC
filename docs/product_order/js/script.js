@@ -501,7 +501,7 @@ async function submitOrder() {
   const payload = {
     action: 'submitOrder',
     items: itemsToOrder,
-    customerName: dynamicQuestionsData['customerName'],
+    customerName: dynamicQuestionsData['customer_name'],
     notes: dynamicQuestionsData['notes'],
     dynamic_questions_data: dynamicQuestionsData // 動的に生成された質問項目データ
   };
