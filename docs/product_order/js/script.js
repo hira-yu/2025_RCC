@@ -475,6 +475,28 @@ async function submitOrder() {
       document.getElementById('submit-order').disabled = false;
       return;
   }
+
+  // カートの内容からitemsToOrderを生成
+  const itemsToOrder = [];
+  for (const cartItemId in cart) {
+    const item = cart[cartItemId];
+    if (item.quantity > 0) {
+      itemsToOrder.push({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        selectedOptions: item.selectedOptions,
+        optionPriceAdjustment: item.optionPriceAdjustment
+      });
+    }
+  }
+
+  if (itemsToOrder.length === 0) {
+    openResultModal('エラー', 'カートに商品がありません。');
+    document.getElementById('submit-order').disabled = false;
+    return;
+  }
   
   const payload = {
     action: 'submitOrder',
