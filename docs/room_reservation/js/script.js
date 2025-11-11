@@ -159,7 +159,6 @@ function openReservationConfirmModal() {
     startTime,
     endTime,
     ...dynamicQuestionsData, // 動的な質問データをすべて含める
-    lineUserId: getLineUserId() // LINEユーザーIDを追加
   };
 
   // モーダルに表示する内容を生成
@@ -201,7 +200,6 @@ async function submitReservation() {
   const payload = {
     action: 'submitReservation',
     ...currentReservation, // 現在の予約情報をペイロードに含める
-    lineUserId: getLineUserId() // LINEユーザーIDを追加
   };
 
   var postparam = {
@@ -305,45 +303,6 @@ window.onclick = function(event) {
   }
 }
 
-// URLパラメータからLINEユーザーIDを取得し、sessionStorageに保存
-const urlParams = new URLSearchParams(window.location.search);
-const lineUserIdFromUrl = urlParams.get('lineUserId');
-if (lineUserIdFromUrl) {
-    sessionStorage.setItem('lineUserId', lineUserIdFromUrl);
-    // URLからlineUserIdパラメータを削除してリロード（URLをクリーンにするため）
-    const newUrl = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, newUrl);
-}
-
-// sessionStorageからLINEユーザーIDを取得するヘルパー関数
-function getLineUserId() {
-    return sessionStorage.getItem('lineUserId');
-}
-
-// URLパラメータからLINEユーザー名を取得し、入力欄に設定
-const lineNameFromUrl = urlParams.get('lineName');
-if (lineNameFromUrl) {
-    // 動的に生成される要素なので、DOMContentLoaded後にアクセスする必要がある
-    // ここでは直接設定せず、initializeReservationForm内で設定するように変更
-    // または、loadDynamicQuestionsが完了した後に設定する
-    // 一旦、ここでは何もしないか、コメントアウトしておく
-    // const contactNameInput = document.getElementById('contactName');
-    // if (contactNameInput && !contactNameInput.value) { // 既に値がなければ自動入力
-    //     contactNameInput.value = decodeURIComponent(lineNameFromUrl);
-    // }
-    // URLからlineNameパラメータを削除（URLをクリーンにするため）
-    const newUrl = window.location.origin + window.location.pathname + window.location.search.replace(/&?lineName=[^&]*/, '');
-    window.history.replaceState({}, document.title, newUrl);
-}
-
 window.onload = async () => {
     await initializeReservationForm();
-    // LINEユーザー名がURLパラメータにある場合、動的に生成されたcontactNameフィールドに設定
-    const lineNameFromUrl = urlParams.get('lineName');
-    if (lineNameFromUrl) {
-        const contactNameInput = document.getElementById('contactName');
-        if (contactNameInput && !contactNameInput.value) {
-            contactNameInput.value = decodeURIComponent(lineNameFromUrl);
-        }
-    }
 };

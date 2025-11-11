@@ -26,20 +26,6 @@ h1, .page-title {
     left: 2.5em;
 }
 
-.line-login-container {
-    display: none; /* LINEアイコンを非表示にする */
-    position: absolute;
-    top: 20px;
-    right: 20px; /* Adjust this value to place it to the left of order-history-icon (right: 80px) */
-    z-index: 10; /* Ensure it's above other elements if needed */
-}
-
-.line-login-button img {
-    height: 2.8em; /* Adjust size as needed */
-    width: auto;
-    vertical-align: bottom;
-}
-
 .icon_box {
     position: absolute;
     top: 20px;
@@ -69,14 +55,6 @@ h1, .page-title {
         left: auto; /* leftプロパティをリセット */
         line-height: normal; /* 行の高さをリセット */
         font-size: 1.8em; /* フォントサイズを調整 */
-    }
-
-    .line-login-container {
-        position: static; /* 絶対配置を解除 */
-        right: auto; /* rightプロパティをリセット */
-        top: auto; /* topプロパティをリセット */
-        margin-top: 10px; /* 上部に少し余白を追加 */
-        margin-top: 0; /* 既存のmargin-topをリセット */
     }
 
     .icon_box {
