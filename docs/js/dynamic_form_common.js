@@ -209,6 +209,10 @@ export function getDynamicQuestionsDataCommon(questions) {
         } else if (question.input_type === 'radio') {
             const radio = document.querySelector(`input[name="${question.question_key}"]:checked`);
             value = radio ? radio.value : '';
+        } else if (inputElement.tagName === 'SELECT' && inputElement.multiple) { // select multiple の場合
+            value = Array.from(inputElement.options)
+                         .filter(option => option.selected)
+                         .map(option => option.value);
         } else {
             value = inputElement.value.trim();
         }
