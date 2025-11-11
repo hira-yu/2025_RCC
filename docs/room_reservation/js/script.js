@@ -3,6 +3,21 @@ import { loadDynamicQuestionsCommon, renderDynamicQuestionsCommon, getDynamicQue
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
 let dynamicQuestions = []; // 動的に生成される質問項目を保持する変数
 
+function showLoadingOverlay() {
+  document.getElementById('loading-overlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loading-overlay').style.display = 'none';
+}
+
+function openResultModal(title, message) {
+  document.getElementById('result-modal-title').textContent = title;
+  document.getElementById('result-modal-message').textContent = message;
+  document.getElementById('result-modal').style.display = 'inline-flex';
+}
+window.openResultModal = openResultModal; // グローバルに公開
+
 // DOM要素をグローバル変数として取得
 const reservationForm = document.getElementById('reservationForm');
 const confirmReservationBtn = document.getElementById('confirmReservationBtn');
