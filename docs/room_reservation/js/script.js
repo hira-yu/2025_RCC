@@ -1,6 +1,7 @@
 import { loadDynamicQuestionsCommon, renderDynamicQuestionsCommon, getDynamicQuestionsDataCommon } from '../../js/dynamic_form_common.js';
 
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
+// const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
+const PHP_API_URL = 'https://momoport.hirayu.jp/php/reservations.php';
 let dynamicQuestions = []; // 動的に生成される質問項目を保持する変数
 
 function showLoadingOverlay() {
@@ -238,7 +239,7 @@ async function submitReservation() {
   isSubmitting = true;
 
   try {
-    const response = await fetch(GAS_WEB_APP_URL, postparam);
+    const response = await fetch(PHP_API_URL, postparam);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

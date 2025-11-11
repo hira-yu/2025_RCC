@@ -1,4 +1,5 @@
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec'; // ★要更新: 集会所予約用のGAS Web App URL
+// const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZEeRJFzVSya4TBN4mddhIMBb6_k-6B_FFLDEcFf_YFZRp1MM8fHr-12otS42DDd65/exec';
+const PHP_API_URL = 'https://momoport.hirayu.jp/php/reservations.php'; // ★要更新: 集会所予約用のGAS Web App URL
 
 const reservationTableBody = document.querySelector('#reservationTable tbody');
 const statusFilter = document.getElementById('statusFilter');
@@ -48,7 +49,7 @@ async function fetchReservations() {
   showLoadingOverlay();
   if (messageEl) messageEl.textContent = ''; // messageElがnullでないことを確認
   try {
-    const response = await fetch(`${GAS_WEB_APP_URL}?action=getReservations`);
+    const response = await fetch(`${PHP_API_URL}?action=getReservations`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -186,7 +187,7 @@ async function executeStatusChange(reservationId, newStatus) {
       "body" : JSON.stringify(payload)
     };
 
-    const response = await fetch(GAS_WEB_APP_URL, postparam);
+    const response = await fetch(PHP_API_URL, postparam);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
